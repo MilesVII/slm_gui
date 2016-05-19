@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +26,7 @@ public class MainActivity extends Activity {
 	private LinearLayout list;
 	private File[] _unicorn;
 	private TextView sel_cap, cp_cap;
+	private boolean theme = true;
 	public String cur_path = "/storage";
 	public ArrayList<File> selection;
 	public static MainActivity me;

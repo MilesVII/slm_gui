@@ -73,7 +73,6 @@ public class Processor implements Runnable {
 		ui_console = (TextView) friend.findViewById(R.id.p_console);
 		ui_abort = (Button) friend.findViewById(R.id.pr_b_abort);
 		ui_close = (Button) friend.findViewById(R.id.pr_b_close);
-		ui_close.setClickable(false);
 		ui_progress = (ProgressBar) friend.findViewById(R.id.p_progress);
 		if (processing_list != null){
 			ui_progress.setMax(processing_list.size());
@@ -86,6 +85,7 @@ public class Processor implements Runnable {
 			@Override
 			public void onClick (View no){
 				active = false;
+				complete();
 				ui_status.setText("Aborted");
 			}
 		});
@@ -99,10 +99,10 @@ public class Processor implements Runnable {
 			@Override
 			public boolean onLongClick (View _){
 				((ClipboardManager) friend.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("SLM_data", ((TextView)_).getText().toString()));
-				//writeline("\nLast showed lyrics was successfully copied to clipboard");
 				return true;
 			}
 		});
+		ui_close.setClickable(false);
 		_t = new Thread(this, "...");
 		_t.start();
 	}

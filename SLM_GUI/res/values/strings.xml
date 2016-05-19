@@ -9,5 +9,6 @@
     <string name="menu_sl">Show Lyrics</string>
     <string name="menu_search">Search in Lyrics</string>
     <string name="app_name_x">Seventh Lyrics Manager</string>
+    <string name="menu_st">Toggle theme</string>
 
 </resources>
