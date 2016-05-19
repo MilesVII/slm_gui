@@ -1,0 +1,13 @@
+<resources>
+
+    <string name="app_name">Seventh Lyrics Manager</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_gl">Get Lyrics</string>
+    <string name="menu_about">Help &amp; About</string>
+    <string name="menu_bd">Erase Lyrics</string>
+    <string name="menu_sl">Show Lyrics</string>
+    <string name="menu_search">Search in Lyrics</string>
+    <string name="app_name_x">Seventh Lyrics Manager</string>
+
+</resources>
