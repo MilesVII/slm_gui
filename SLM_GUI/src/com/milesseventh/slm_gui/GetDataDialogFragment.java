@@ -29,9 +29,10 @@ public class GetDataDialogFragment extends DialogFragment {
 		}).setPositiveButton("Submit", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				jack = new Processor(((TextView)getDialog().findViewById(R.id.gd_artist)).getText().toString(),
-									((TextView)getDialog().findViewById(R.id.gd_title)).getText().toString(),
-									((CheckBox)getDialog().findViewById(R.id.gd_forcecase)).isChecked());
+				String _art = ((TextView)getDialog().findViewById(R.id.gd_artist)).getText().toString().trim();
+				String _tit = ((TextView)getDialog().findViewById(R.id.gd_title)).getText().toString().trim();
+				if (!_art.equals("") && !_tit.equals(""))
+					jack = new Processor(_art, _tit, ((CheckBox)getDialog().findViewById(R.id.gd_forcecase)).isChecked());
 			}
 		});
 		return _builder.create();

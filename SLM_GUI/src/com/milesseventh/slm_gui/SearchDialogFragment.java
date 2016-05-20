@@ -31,9 +31,10 @@ public class SearchDialogFragment extends DialogFragment {
 		}).setPositiveButton("Search", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				Processor jack = new Processor(_x,
-									((TextView)getDialog().findViewById(R.id.sq_field)).getText().toString(),
-									true /*or false. Nevermind*/);
+				String _q = ((TextView)getDialog().findViewById(R.id.sq_field)).getText().toString().trim();
+				if (!_q.equals("")){
+					Processor jack = new Processor(_x, _q, true /*or false. Nevermind*/);
+				}
 			}
 		});
 		return _builder.create();
