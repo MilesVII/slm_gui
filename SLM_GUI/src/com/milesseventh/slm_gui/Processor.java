@@ -25,6 +25,7 @@ import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Processor implements Runnable {
 	public final static String COM_BURNDOWN = "bd";
@@ -41,7 +42,7 @@ public class Processor implements Runnable {
 	private ArrayList<File> processing_list;
 	private MainActivity friend = MainActivity.me;
 	private int redir_amount = 0;
-
+	private Toast toast_copied = Toast.makeText(friend.getApplicationContext(), "The text has been copied to clipboard", Toast.LENGTH_SHORT);
 	private TextView ui_status, ui_console;
 	private ProgressBar ui_progress;
 	private Button ui_abort, ui_close;
@@ -99,6 +100,7 @@ public class Processor implements Runnable {
 			@Override
 			public boolean onLongClick (View _){
 				((ClipboardManager) friend.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("SLM_data", ((TextView)_).getText().toString()));
+				toast_copied.show();
 				return true;
 			}
 		});
@@ -114,7 +116,8 @@ public class Processor implements Runnable {
 				toUI(ui_status, "Erasing...");
 				for (File _unicorn : processing_list){
 					if (active){
-						Mp3File _victim = new Mp3File (_unicorn);
+						Mp3File _victim;
+						_victim = new Mp3File (_unicorn);
 						if (_victim.getId3v2Tag().getTitle() != null){
 							_victim.getId3v2Tag().removeLyrics();
 							//Lyrics erased
@@ -145,7 +148,6 @@ public class Processor implements Runnable {
 					if (active){
 						_log_proced++;
 						String _lyr = pullLyricsBind(_unicorn, true);
-						redir_amount = 0;
 						if (_lyr == "NF"){
 							_log_nf++;
 							console[_log_proced - 1] += "- lyrics not found.";
@@ -159,6 +161,7 @@ public class Processor implements Runnable {
 							_log_ok++;
 							console[_log_proced - 1] += "- lyrics downloaded and saved successfully.";
 						}
+						redir_amount = 0;
 					}else{
 						break;
 					}
@@ -193,15 +196,19 @@ public class Processor implements Runnable {
 				boolean _nothingwasfound = true;
 				for (File _unicorn : processing_list){
 					if (active){
-						Mp3File _victim = new Mp3File (_unicorn);
-						_lyr = _victim.getId3v2Tag().getLyrics();
-						if (_lyr != null)
-							if (_lyr.toLowerCase().contains(query)){
-								if (_nothingwasfound)
-									toUI(ui_console, "Files with lyrics containing search query:\n");
-								_nothingwasfound = false;
-								addToUI(ui_console, _unicorn.getName());
-							}
+						Mp3File _victim;
+						_victim = new Mp3File (_unicorn);
+						ID3v2 __ = _victim.getId3v2Tag();
+						if (__ != null){
+							_lyr = __.getLyrics();
+							if (_lyr != null)
+								if (_lyr.toLowerCase().contains(query)){
+									if (_nothingwasfound)
+										toUI(ui_console, "Files with lyrics containing search query:\n");
+									_nothingwasfound = false;
+									addToUI(ui_console, _unicorn.getName());
+								}
+						}
 					}else
 						break;
 					_i++;
