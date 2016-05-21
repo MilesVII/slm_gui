@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/ccm_set" android:title="@string/cm_sl"></item>
-    <item android:id="@+id/cm_set" android:title="@string/cm_set"></item>
-    
-
-</menu>

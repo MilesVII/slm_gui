@@ -8,8 +8,7 @@
     <string name="menu_sl">Show Lyrics</string>
     <string name="menu_search">Search in Lyrics</string>
     <string name="app_name_x">Seventh Lyrics Manager</string>
-    <string name="cm_sl">Show Lyrics</string>
-    <string name="cm_set">Set Lyrics</string>
+    <string name="ui_set">Set Lyrics</string>
     <string name="ui_e">Error</string>
     <string name="ui_e_id3v2">ID3v2 tag wasn\'t found</string>
     <string name="ui_e_inv_data">Invalid data</string>

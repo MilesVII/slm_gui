@@ -32,7 +32,6 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
-		//View li = getActivity().getLayoutInflater().inflate(R.layout.customcontextmenu, null);
 
 		LinearLayout _li = new LinearLayout(MainActivity.me);
 		_li.setOrientation(LinearLayout.VERTICAL);
@@ -40,7 +39,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 		Button ccm_sl = new Button(MainActivity.me);
 		ccm_sl.setBackgroundResource(R.drawable.button_custom);
 		ccm_sl.setLayoutParams(MainActivity.me.entrylp);
-		ccm_sl.setText(getString(R.string.cm_sl));
+		ccm_sl.setText(getString(R.string.menu_sl));
 		ccm_sl.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View no){
@@ -67,7 +66,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 		Button ccm_set = new Button(MainActivity.me);
 		ccm_set.setBackgroundResource(R.drawable.button_custom);
 		ccm_set.setLayoutParams(MainActivity.me.entrylp);
-		ccm_sl.setText(getString(R.string.cm_set));
+		ccm_set.setText(getString(R.string.ui_set));
 		ccm_set.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View no){
@@ -123,7 +122,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 					zero.getId3v2Tag().setLyrics(editor.getText().toString());
 					zero.save(_file + ".x");
 					Processor.overkill(new File(_file), new File(_file + ".x"));
-					Toast.makeText(MainActivity.me.getApplicationContext(), getString(R.string.ui_saved), Toast.LENGTH_SHORT);
+					Toast.makeText(MainActivity.me.getApplicationContext(), getString(R.string.ui_saved), Toast.LENGTH_SHORT).show();;
 				} catch (UnsupportedTagException e) {
 					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_id3v2));
 					e.printStackTrace();

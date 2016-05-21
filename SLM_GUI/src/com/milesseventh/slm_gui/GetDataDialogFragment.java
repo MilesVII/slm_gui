@@ -32,7 +32,7 @@ public class GetDataDialogFragment extends DialogFragment {
 			artistV.setText(artist);
 			titleV.setText(title);
 		}
-		_builder.setView(inflated).setTitle(getString(R.string.cm_sl)).setNeutralButton(getString(R.string.ui_close), new DialogInterface.OnClickListener() {
+		_builder.setView(inflated).setTitle(getString(R.string.menu_sl)).setNeutralButton(getString(R.string.ui_close), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {}
 		}).setPositiveButton(getString(R.string.ui_submit), new DialogInterface.OnClickListener() {
