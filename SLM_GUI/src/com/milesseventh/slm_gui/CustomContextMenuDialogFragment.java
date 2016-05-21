@@ -122,7 +122,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 					zero.getId3v2Tag().setLyrics(editor.getText().toString());
 					zero.save(_file + ".x");
 					Processor.overkill(new File(_file), new File(_file + ".x"));
-					Toast.makeText(MainActivity.me.getApplicationContext(), getString(R.string.ui_saved), Toast.LENGTH_SHORT).show();;
+					Toast.makeText(MainActivity.me.getApplicationContext(), R.string.ui_saved, Toast.LENGTH_SHORT).show();
 				} catch (UnsupportedTagException e) {
 					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_id3v2));
 					e.printStackTrace();
