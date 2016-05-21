@@ -10,8 +10,6 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class SearchDialogFragment extends DialogFragment {
@@ -25,10 +23,10 @@ public class SearchDialogFragment extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
 		LayoutInflater li = getActivity().getLayoutInflater();
-		_builder.setView(li.inflate(R.layout.search_query, null)).setTitle("Search in lyrics").setNeutralButton("Close", new DialogInterface.OnClickListener() {
+		_builder.setView(li.inflate(R.layout.search_query, null)).setTitle(R.string.ui_sil).setNeutralButton(R.string.ui_close, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {}
-		}).setPositiveButton("Search", new DialogInterface.OnClickListener() {
+		}).setPositiveButton(R.string.ui_search, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				String _q = ((TextView)getDialog().findViewById(R.id.sq_field)).getText().toString().trim();

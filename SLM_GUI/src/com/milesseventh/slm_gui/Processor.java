@@ -42,7 +42,7 @@ public class Processor implements Runnable {
 	private ArrayList<File> processing_list;
 	private MainActivity friend = MainActivity.me;
 	private int redir_amount = 0;
-	private Toast toast_copied = Toast.makeText(friend.getApplicationContext(), "The text has been copied to clipboard", Toast.LENGTH_SHORT);
+	private Toast toast_copied = Toast.makeText(friend.getApplicationContext(), friend.getString(R.string.ui_textcopied), Toast.LENGTH_SHORT);
 	private TextView ui_status, ui_console;
 	private ProgressBar ui_progress;
 	private Button ui_abort, ui_close;
@@ -87,7 +87,7 @@ public class Processor implements Runnable {
 			public void onClick (View no){
 				active = false;
 				complete();
-				ui_status.setText("Aborted");
+				ui_status.setText(R.string.ui_aborted);
 			}
 		});
 		ui_close.setOnClickListener(new OnClickListener(){
@@ -113,7 +113,7 @@ public class Processor implements Runnable {
 		try{
 			if (mode.equals(COM_BURNDOWN)){
 				int _i = 0;
-				toUI(ui_status, "Erasing...");
+				toUI(ui_status, friend.getString(R.string.ui_erasing));
 				for (File _unicorn : processing_list){
 					if (active){
 						Mp3File _victim;
@@ -126,7 +126,7 @@ public class Processor implements Runnable {
 						} else {
 							//E: No ID3v2 tag or track title is null
 						}
-						console[_i] += " - Processed";
+						console[_i] += " - " + friend.getString(R.string.ui_processed);
 						_i++;
 						toProgress(_i);
 						refreshConsole();
@@ -137,12 +137,11 @@ public class Processor implements Runnable {
 					}
 				}
 				complete();
-				toUI(ui_status, "Their blood is on your hooves. The work is done.");
+				toUI(ui_status, friend.getString(R.string.ui_er_done));
 			}
 			
 			if (mode.equalsIgnoreCase(COM_GL)){
-				int _log_ok = 0, _log_nf = 0, _log_ex = 0, _log_proced = 0;;
-				String _sizematters = "/" + Integer.toString(processing_list.size()) + ". ";
+				int _log_ok = 0, _log_nf = 0, _log_ex = 0, _log_proced = 0;
 				toUI(ui_status, "Processing...");
 				for (File _unicorn : processing_list){
 					if (active){
@@ -150,16 +149,16 @@ public class Processor implements Runnable {
 						String _lyr = pullLyricsBind(_unicorn, true);
 						if (_lyr == "NF"){
 							_log_nf++;
-							console[_log_proced - 1] += "- lyrics not found.";
+							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_lnotfound);
 						} else if (_lyr == "NT"){
 							_log_nf++;
-							console[_log_proced - 1] += "- E: No ID3v2 tag or track title is null";
+							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_e_id3v2);
 						} else if (_lyr.startsWith("EXIMAGIK:")){
 							_log_ex++;
-							console[_log_proced - 1] += "- lyrics already exist. Ignored.";
+							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_exist);
 						} else{
 							_log_ok++;
-							console[_log_proced - 1] += "- lyrics downloaded and saved successfully.";
+							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_ok);
 						}
 						redir_amount = 0;
 					}else{
@@ -169,30 +168,30 @@ public class Processor implements Runnable {
 					toProgress(_log_proced);
 				}
 				complete();
-				toUI(ui_status, "Done!\nDownloaded: " + Integer.toString(_log_ok) + 
-						 		 "\nIgnored due to existing lyrics: " + Integer.toString(_log_ex) + 
-						 		 "\nNot found: " + Integer.toString(_log_nf) + 
-						 		 "\n--Sum total: " + Integer.toString(_log_proced));
+				toUI(ui_status, friend.getString(R.string.ui_done) + "\n" + friend.getString(R.string.ui_downed) + ": " + Integer.toString(_log_ok) + 
+						 		 "\n" + friend.getString(R.string.ui_ignored) + ": " + Integer.toString(_log_ex) + 
+						 		 "\n" + friend.getString(R.string.ui_notfound) + ": " + Integer.toString(_log_nf) + 
+						 		 "\n--" + friend.getString(R.string.ui_sumtotal) + ": " + Integer.toString(_log_proced));
 			}
 
 			if (mode.equals(COM_SL)){
-				String _lyr, _mane;
+				String _lyr;
 				//ui_status.setText("Loading...");
-				toUI(ui_status, "Loading...");
+				toUI(ui_status, friend.getString(R.string.ui_loading));
 				_lyr = pullLyrics(artist, title, 0, forcecase);
 				
 				if (_lyr == "NF")
-					toUI(ui_console, "Lyrics not found");
+					toUI(ui_console, friend.getString(R.string.ui_lnotfound));
 				else
-					toUI(ui_console, "Lyrics downloaded:\n" + artist + " - " + title + "\n" + _lyr);
+					toUI(ui_console, friend.getString(R.string.ui_ok) +":\n" + artist + " - " + title + "\n" + _lyr);
 				complete();
 			}
 			
 			if (mode.startsWith(COM_SEARCH)){
 				String _lyr;
 				int _i = 0;
-				toUI(ui_status, "Searching for \"" + query + "\"...");
-				toUI(ui_console, "Files with lyrics containing the query will be shown here");
+				toUI(ui_status, friend.getString(R.string.ui_searchfor) + " \"" + query + "\"...");
+				toUI(ui_console, friend.getString(R.string.ui_lyrhere));
 				boolean _nothingwasfound = true;
 				for (File _unicorn : processing_list){
 					if (active){
@@ -204,7 +203,7 @@ public class Processor implements Runnable {
 							if (_lyr != null)
 								if (_lyr.toLowerCase().contains(query)){
 									if (_nothingwasfound)
-										toUI(ui_console, "Files with lyrics containing search query:\n");
+										toUI(ui_console, friend.getString(R.string.ui_foundlyrshere) + ":\n");
 									_nothingwasfound = false;
 									addToUI(ui_console, _unicorn.getName());
 								}
@@ -215,12 +214,12 @@ public class Processor implements Runnable {
 					toProgress(_i);
 				}
 				if (_nothingwasfound)
-					toUI(ui_console, "Nothing was found");
+					toUI(ui_console, friend.getString(R.string.ui_nothingwasfound));
 				complete();
 			}
 		}catch(Exception ex){
 			complete();
-			toUI(ui_status, "Critical error");
+			toUI(ui_status, friend.getString(R.string.ui_e_crit));
 			toUI(ui_console, ex.getMessage() + "/" + ex.getLocalizedMessage());
 		}
 	}
@@ -344,7 +343,7 @@ public class Processor implements Runnable {
 		return new String(array).trim().replace(' ', '_')/*.replace("&", "%26")*/;
 	}
 	
-	private void overkill(File _victim, File _master){
+	public static void overkill(File _victim, File _master){
 		_victim.delete();
 		_master.renameTo(_victim);
 	}

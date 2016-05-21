@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Artist&apos;s name" >
+        android:hint="@string/ui_ph_gd_artist" >
 
         <requestFocus />
     </EditText>
@@ -19,12 +19,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Song title" />
+        android:hint="@string/ui_ph_gd_title" />
 
     <CheckBox
         android:id="@+id/gd_forcecase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Force characters&apos; case" />
+        android:text="@string/ui_gd_forcecase" />
 
 </LinearLayout>

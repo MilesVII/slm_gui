@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:minHeight="24dp"
-            android:text="Show" />
+            android:text="@string/ui_show" />
 
         <Button
             android:id="@+id/b_clearsel"
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:minHeight="24dp"
-            android:text="Deselect" />
+            android:text="@string/ui_deselect" />
 
     </LinearLayout>
 

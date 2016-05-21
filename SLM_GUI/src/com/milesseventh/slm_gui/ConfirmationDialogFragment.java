@@ -19,12 +19,12 @@ public class ConfirmationDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
-		_builder.setTitle("Confirmation").setMessage("Lyrics of all selected files will be erased. Continue?").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		_builder.setTitle(getString(R.string.ui_confirmation)).setMessage(getString(R.string.ui_er_alert)).setNegativeButton(getString(R.string.ui_cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				
 			}
-		}).setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+		}).setPositiveButton(getString(R.string.ui_continue), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				Processor jack = new Processor(_x, Processor.COM_BURNDOWN);

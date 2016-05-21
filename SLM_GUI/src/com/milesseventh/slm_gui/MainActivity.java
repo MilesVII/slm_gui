@@ -7,14 +7,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.TaskStackBuilder;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -26,19 +25,30 @@ public class MainActivity extends Activity {
 	private LinearLayout list;
 	private File[] _unicorn;
 	private TextView sel_cap, cp_cap;
-	private boolean theme = true;
 	public String cur_path = "/storage";
 	public ArrayList<File> selection;
 	public static MainActivity me;
-	private final LayoutParams entrylp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+	public final LayoutParams entrylp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 	private final OnClickListener entrylistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
-			Button _t =(Button)callofktulu;
+			Button _t = (Button) callofktulu;
 			if (_t.getText().equals("../")){
 				cd_command(cur_path.substring(0, cur_path.lastIndexOf("/")));
-			}else
-				cd_command(cur_path + "/" + _t.getText());
+			}else{
+				File _f = new File(cur_path + "/" + _t.getText().toString());
+				if (_f.isDirectory())
+					cd_command(_f.getPath());
+			}
+		}
+	};
+	private final OnLongClickListener cmlistener = new OnLongClickListener() {
+		@Override
+		public boolean onLongClick(View callofktulu) {
+			CustomContextMenuDialogFragment _t = new CustomContextMenuDialogFragment();
+			_t.setTitle(cur_path + "/" + ((Button)callofktulu).getText().toString());
+			_t.show(MainActivity.me.getFragmentManager(), "...");
+			return true;
 		}
 	};
 	private final OnClickListener clearlistener = new OnClickListener() {
@@ -56,15 +66,14 @@ public class MainActivity extends Activity {
 			for (File _horsey : selection)
 				_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
 			if (_t.equals(""))
-				_t = "No files selected";
-			showInfoDialog("Selection", _t);
+				_t = getString(R.string.ui_nfs);
+			showInfoDialog(getString(R.string.ui_selection), _t);
 		}
 	};
 	private final OnCheckedChangeListener checklistener = new OnCheckedChangeListener() {
 		@Override
 		public void onCheckedChanged(CompoundButton callofktulu, boolean _hoof) {
 			File _freehugs = ((CheckBoxBind)callofktulu).getHost();
-			CheckBoxBind _warm = ((CheckBoxBind)callofktulu);
 			if (_freehugs.isDirectory()){
 				if (_hoof){
 					addSubFiles(_freehugs, selection);
@@ -130,13 +139,13 @@ public class MainActivity extends Activity {
 		}
 		if ((item.getItemId() == R.id.act_bd || item.getItemId() == R.id.act_gl || 
 				item.getItemId() == R.id.act_search) && selection.isEmpty()){
-				showInfoDialog("Error", "No files selected");
+				showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_nfs));
 				return true;
 		}
 		
 		switch (item.getItemId()){
 		case (R.id.action_about):
-			showInfoDialog("Help & About", //Uhm...
+			showInfoDialog(getString(R.string.ui_hna), //Uhm...
 						"Seventh Lyrics Manager is free opensource application " + 
 						"that allows you to automagically download and write " + 
 						"song lyrics into ID3v2 tag that included by the most of MP3 " + 
@@ -171,7 +180,7 @@ public class MainActivity extends Activity {
 		case (R.id.act_search):
 			searchDialog();
 			return true;
-	}
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -217,6 +226,8 @@ public class MainActivity extends Activity {
 		_go.setGravity(Gravity.START);
 		_go.setClickable(_victim.isDirectory());
 		_go.setOnClickListener(entrylistener);
+		if (_victim.isFile())
+			_go.setOnLongClickListener(cmlistener);
 		
 		_ll.addView(_tb);
 		_ll.addView(_go);
@@ -234,28 +245,10 @@ public class MainActivity extends Activity {
 	
 	public boolean checksync_dir (File _lick){
 		String _tastyteeth = _lick.getPath();
-		for (File _saliva : selection){
+		for (File _saliva : selection)
 			if (_saliva.getPath().startsWith(_tastyteeth))
 				return true;
-		}
 		return false;
-		/*
-		if (selection.isEmpty())
-			return false;
-		File[] _mouth = _lick.listFiles();
-		if (_mouth != null)
-		for (File _saliva : _mouth){
-			if (!_saliva.getName().startsWith(".")){
-				if (_saliva.isDirectory() && _saliva.exists()){
-					if (checksync_dir(_saliva)){
-						return true;
-					}
-				}else if (_saliva.getName().endsWith(".mp3") &&
-						 selection.contains(_saliva))
-					return true;
-			}
-		}
-		return false;*/
 	}
 
 	private void addSubFiles (File _dir, ArrayList<File> _receiver){
@@ -276,24 +269,16 @@ public class MainActivity extends Activity {
 			if (_saliva.getPath().startsWith(_tastyteeth))
 				_holder.remove(_saliva);
 		selection = _holder;
-		/*
-		for (File _saliva : _dir.listFiles())
-			if(_saliva.isDirectory())
-				remSubFiles(_saliva, _receiver);
-			else if (_saliva.getName().endsWith(".mp3") && 
-					!_saliva.getName().startsWith(".") && 
-					_receiver.contains(_saliva))
-				_receiver.remove(_saliva);*/
 	}
 	
 	private void refreshSelectionCaption(){
-		sel_cap.setText("Files selected: " + Integer.toString(selection.size()));
+		sel_cap.setText(getString(R.string.ui_fs) + ": " + Integer.toString(selection.size()));
 	}
 
-	private void showInfoDialog(String _title, String _text){
+	public static void showInfoDialog(String _title, String _text){
 		InfoDialogFragment _t = new InfoDialogFragment();
 		_t.setData(_title, _text);
-		_t.show(this.getFragmentManager(), "...");
+		_t.show(MainActivity.me.getFragmentManager(), "...");
 	}
 	
 	private void getDataDialog(){

@@ -1,7 +1,6 @@
 <resources>
 
     <string name="app_name">Seventh Lyrics Manager</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="menu_gl">Get Lyrics</string>
     <string name="menu_about">Help &amp; About</string>
@@ -9,6 +8,55 @@
     <string name="menu_sl">Show Lyrics</string>
     <string name="menu_search">Search in Lyrics</string>
     <string name="app_name_x">Seventh Lyrics Manager</string>
-    <string name="menu_st">Toggle theme</string>
+    <string name="cm_sl">Show Lyrics</string>
+    <string name="cm_set">Set Lyrics</string>
+    <string name="ui_e">Error</string>
+    <string name="ui_e_id3v2">ID3v2 tag wasn\'t found</string>
+    <string name="ui_e_inv_data">Invalid data</string>
+    <string name="ui_e_io">IO Error</string>
+    <string name="ui_e_notsup">[Not supported exception]</string>
+    <string name="ui_close">Close</string>
+    <string name="ui_save">Save</string>
+    <string name="ui_discard">Discard</string>
+    <string name="ui_nfs">No files selected</string>
+    <string name="ui_selection">Selection</string>
+    <string name="ui_hna">Help/About</string>
+    <string name="ui_fs">Files selected</string>
+    <string name="ui_search">Search</string>
+    <string name="ui_sil">Search in lyrics</string>
+    <string name="ui_textcopied">The text has been copied to clipboard</string>
+    <string name="ui_saved">Saved</string>
+    <string name="ui_aborted">Aborted</string>
+    <string name="ui_erasing">Erasing&#8230;</string>
+    <string name="ui_processing">Processing&#8230;</string>
+    <string name="ui_processed">Processed</string>
+    <string name="ui_er_done">Their blood is on your hooves. The work is done.</string>
+    <string name="ui_ok">Lyrics downloaded</string>
+    <string name="ui_exist">Lyrics already exist. Ignored</string>
+    <string name="ui_lnotfound">Lyrics not found</string>
+    <string name="ui_done">Done!</string>
+    <string name="ui_downed">Downloaded</string>
+    <string name="ui_ignored">Ignored due to existing lyrics</string>
+    <string name="ui_notfound">Not found</string>
+    <string name="ui_sumtotal">Sum total</string>
+    <string name="ui_loading">Loading&#8230;</string>
+    <string name="ui_lyrhere">Files with lyrics containing the query will be shown here</string>
+    <string name="ui_searchfor">Searching for</string>
+    <string name="ui_foundlyrshere">Files with lyrics containing search query</string>
+    <string name="ui_nothingwasfound">Nothing was found</string>
+    <string name="ui_e_crit">Critical error</string>
+    <string name="ui_submit">Submit</string>
+    <string name="ui_cancel">Cancel</string>
+    <string name="ui_confirm">Confirm</string>
+    <string name="ui_confirmation">Confirmation</string>
+    <string name="ui_continue">Continue</string>
+    <string name="ui_er_alert">Lyrics of all selected files will be erased. Continue?</string>
+    <string name="ui_show">Show</string>
+    <string name="ui_deselect">Deselect</string>
+    <string name="ui_ph_gd_artist">Artist\'s name</string>
+    <string name="ui_ph_gd_title">Song title</string>
+    <string name="ui_gd_forcecase">Force characters\' case</string>
+    <string name="ui_stop">Stop</string>
+    <string name="ui_ph_squery">Search query</string>
 
 </resources>

@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right|center_vertical"
+        android:gravity="center_horizontal|end"
         android:orientation="horizontal" >
 
         <TextView
@@ -19,13 +19,13 @@
             android:id="@+id/pr_b_abort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Abort" />
+            android:text="@string/ui_stop" />
 
         <Button
             android:id="@+id/pr_b_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close" />
+            android:text="@string/ui_close" />
 
     </LinearLayout>
 
