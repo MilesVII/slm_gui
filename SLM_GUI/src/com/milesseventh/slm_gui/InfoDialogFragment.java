@@ -2,9 +2,16 @@ package com.milesseventh.slm_gui;
 
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.DialogFragment;
+import android.text.util.Linkify;
+import android.view.View;
+import android.view.View.OnLongClickListener;
+import android.widget.TextView;
 
 public class InfoDialogFragment extends DialogFragment {
 	private String title = "", text = "";
@@ -17,7 +24,10 @@ public class InfoDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
-		_builder.setTitle(title).setMessage(text).setNeutralButton("Close", new DialogInterface.OnClickListener() {
+		TextView _tv = new TextView(MainActivity.me);
+		_tv.setText(text);
+		Linkify.addLinks(_tv, Linkify.ALL);
+		_builder.setTitle(title).setView(_tv).setNeutralButton(R.string.ui_close, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				

@@ -147,19 +147,21 @@ public class Processor implements Runnable {
 					if (active){
 						_log_proced++;
 						String _lyr = pullLyricsBind(_unicorn, true);
+						String _cap = console[_log_proced - 1];
 						if (_lyr == "NF"){
 							_log_nf++;
-							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_lnotfound);
+							_cap = ">" + _cap + " - " + friend.getString(R.string.ui_lnotfound);
 						} else if (_lyr == "NT"){
 							_log_nf++;
-							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_e_id3v2);
+							_cap = ">" + _cap + " - " + friend.getString(R.string.ui_e_id3v2);
 						} else if (_lyr.startsWith("EXIMAGIK:")){
 							_log_ex++;
-							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_exist);
+							_cap = ">" + _cap + " - " + friend.getString(R.string.ui_exist);
 						} else{
 							_log_ok++;
-							console[_log_proced - 1] += " - " + friend.getString(R.string.ui_ok);
+							_cap = ">" + _cap + " - " + friend.getString(R.string.ui_ok);
 						}
+						console[_log_proced - 1] = _cap;
 						redir_amount = 0;
 					}else{
 						break;

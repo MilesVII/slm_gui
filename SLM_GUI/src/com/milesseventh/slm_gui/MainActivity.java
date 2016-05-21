@@ -145,26 +145,7 @@ public class MainActivity extends Activity {
 		
 		switch (item.getItemId()){
 		case (R.id.action_about):
-			showInfoDialog(getString(R.string.ui_hna), //Uhm...
-						"Seventh Lyrics Manager is free opensource application " + 
-						"that allows you to automagically download and write " + 
-						"song lyrics into ID3v2 tag that included by the most of MP3 " + 
-						"files. There is a lot of music players which are able " + 
-						"to show song's lyric while playing it. \n" +
-						"Developed by Miles Seventh, 2016\n\n" +
-						"DISCLAIMER\n" + 
-						"Seventh Lyrics Manager is provided by Miles Seventh \"as is\" " + 
-						"and \"with all faults\". Developer makes no representations or " + 
-						"warranties of any kind concerning the safety, suitability, " + 
-						"lack of viruses, inaccuracies, typographical errors, or other " + 
-						"harmful components of this software. You are solely " + 
-						"responsible for the protection of your equipment and backup " + 
-						"of your data, and the Developer will not be liable for any " + 
-						"damages you may suffer in connection with using, modifying, " + 
-						"or distributing this software.\n\n" +
-						"THANKS TO...\n" +
-						"Application uses http://lyrics.wikia.com to fetch lyrics and " +
-						"mp3agic library (com.mpatric.mp3agic) to access ID3V2 tag. Thanks ^^");
+			showInfoDialog(getString(R.string.menu_about), getString(R.string.about_content));
 			return true;
 		case (R.id.act_sl):
 			getDataDialog();
@@ -213,17 +194,18 @@ public class MainActivity extends Activity {
 	public void addEntry (File _victim){
 		LinearLayout _ll = new LinearLayout(this);
 		_ll.setOrientation(LinearLayout.HORIZONTAL);
-
+		
 		CheckBoxBind _tb = new CheckBoxBind(this, _victim);
 		_tb.setEnabled(!_victim.getName().equals(".."));
 		_tb.setChecked(checksync(_victim));
+		_tb.setGravity(Gravity.CENTER_VERTICAL + Gravity.CENTER_HORIZONTAL);
 		_tb.setOnCheckedChangeListener(checklistener);
 		
 		Button _go = new Button(this);
-		_go.setBackgroundResource(R.drawable.button_custom);
+		_go.setBackgroundResource(R.drawable.button_custom);//hmm. i wonder if there any way to illuminate the whole entry
 		_go.setText(_victim.getName() + (_victim.isDirectory()?"/":""));
 		_go.setLayoutParams(entrylp);
-		_go.setGravity(Gravity.START);
+		_go.setGravity(Gravity.START + Gravity.CENTER_VERTICAL);
 		_go.setClickable(_victim.isDirectory());
 		_go.setOnClickListener(entrylistener);
 		if (_victim.isFile())
