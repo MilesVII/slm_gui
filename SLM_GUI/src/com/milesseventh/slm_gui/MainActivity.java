@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +25,10 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	private static String[] perm_stor = {
+			Manifest.permission.WRITE_EXTERNAL_STORAGE,
+			Manifest.permission.READ_EXTERNAL_STORAGE
+	};
 	private LinearLayout list;
 	private File[] _unicorn;
 	private TextView sel_cap, cp_cap;
@@ -106,6 +113,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+			PackageManager.PERMISSION_GRANTED){
+			ActivityCompat.requestPermissions(this, perm_stor, 1);
+		}//...
 		sharedInit();
 	}
 	

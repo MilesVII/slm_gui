@@ -88,12 +88,12 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 	
 	private void showEditor(final String _file){
 		Builder _builder = new Builder(getActivity());
-		LinearLayout _ll = new LinearLayout(MainActivity.me);
-		_ll.setOrientation(LinearLayout.VERTICAL);
+		//LinearLayout _ll = new LinearLayout(MainActivity.me);
+		//_ll.setOrientation(LinearLayout.VERTICAL);
 		
 		final EditText editor = new EditText(MainActivity.me);
 		editor.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		_ll.addView(editor);
+		//_ll.addView(editor);
 		try {
 			editor.setText(new Mp3File (_file).getId3v2Tag().getLyrics());
 		} catch (UnsupportedTagException e) {
@@ -110,7 +110,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 			return;
 		}
 		
-		_builder.setView(_ll).setTitle(_file).setNeutralButton(getString(R.string.ui_discard), new DialogInterface.OnClickListener() {
+		_builder.setView(editor).setTitle(_file).setNeutralButton(getString(R.string.ui_discard), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {}
 		}).setPositiveButton(getString(R.string.ui_save), new DialogInterface.OnClickListener(){
