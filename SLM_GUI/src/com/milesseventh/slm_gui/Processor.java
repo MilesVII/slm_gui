@@ -142,7 +142,7 @@ public class Processor implements Runnable {
 			
 			if (mode.equalsIgnoreCase(COM_GL)){
 				int _log_ok = 0, _log_nf = 0, _log_ex = 0, _log_proced = 0;
-				toUI(ui_status, "Processing...");
+				toUI(ui_status, friend.getString(R.string.ui_processing));
 				for (File _unicorn : processing_list){
 					if (active){
 						_log_proced++;

@@ -1,0 +1,67 @@
+<resources>
+
+    <string name="app_name">Seventh Lyrics Manager</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_gl">Скачать тексты в mp3-файлы</string>
+    <string name="menu_about">О приложении</string>
+    <string name="menu_bd">Удалить тексты из файлов</string>
+    <string name="menu_sl">Показать текст песни</string>
+    <string name="menu_search">Поиск в текстах</string>
+    <string name="app_name_x">Seventh Lyrics Manager</string>
+    <string name="ui_set">Редактировать текст</string>
+    <string name="ui_e">Ошибка</string>
+    <string name="ui_e_id3v2">ID3v2-тег не найден</string>
+    <string name="ui_e_inv_data">Некорректные данные</string>
+    <string name="ui_e_io">Ошибка при открытии файла</string>
+    <string name="ui_e_notsup">[Not supported exception]</string>
+    <string name="ui_close">Закрыть</string>
+    <string name="ui_save">Сохранить</string>
+    <string name="ui_discard">Отмена</string>
+    <string name="ui_nfs">Файлы не выбраны</string>
+    <string name="ui_selection">Выбранные файлы</string>
+    <string name="ui_fs">Файлов выбрано</string>
+    <string name="ui_search">Поиск</string>
+    <string name="ui_sil">Поиск в текстах</string>
+    <string name="ui_textcopied">Текст скопирован в буфер обмена</string>
+    <string name="ui_saved">Сохранено</string>
+    <string name="ui_aborted">Отменено</string>
+    <string name="ui_erasing">Производится удаление&#8230;</string>
+    <string name="ui_processing">Обрабатывается&#8230;</string>
+    <string name="ui_processed">Обработано</string>
+    <string name="ui_er_done">Все тексты песен успешно стерты</string>
+    <string name="ui_ok">Текст загружен</string>
+    <string name="ui_exist">Файл уже имеет текст. Пропущено</string>
+    <string name="ui_lnotfound">Текст не найден</string>
+    <string name="ui_done">Готово!</string>
+    <string name="ui_downed">Загружено</string>
+    <string name="ui_ignored">Пропущено</string>
+    <string name="ui_notfound">Не найдено</string>
+    <string name="ui_sumtotal">Всего</string>
+    <string name="ui_loading">Загрузка&#8230;</string>
+    <string name="ui_lyrhere">Песни, текст которых содержит поисковый запрос, будет отображен здесь</string>
+    <string name="ui_searchfor">Производится поиск по</string>
+    <string name="ui_foundlyrshere">Файлы, содержащие поисковый запрос</string>
+    <string name="ui_nothingwasfound">Ничего не найдено</string>
+    <string name="ui_e_crit">Критическая ошибка</string>
+    <string name="ui_submit">Отправить</string>
+    <string name="ui_cancel">Отмена</string>
+    <string name="ui_confirm">Подтвердить</string>
+    <string name="ui_confirmation">Подтверждение</string>
+    <string name="ui_continue">Продолжить</string>
+    <string name="ui_er_alert">Тексты песен всех выбранных файлов будут безвозвратно уничтожены. Продолжить?</string>
+    <string name="ui_show">Просмотр</string>
+    <string name="ui_deselect">Снять выделение</string>
+    <string name="ui_ph_gd_artist">Исполнитель</string>
+    <string name="ui_ph_gd_title">Песня</string>
+    <string name="ui_gd_forcecase">Не изменять регистр символов</string>
+    <string name="ui_stop">Стоп</string>
+    <string name="ui_ph_squery">Поисковый запрос</string>
+	<string name="about_content">Seventh Lyrics Manager - бесплатное приложение с открытым исходным кодом, позволяющее автоматически скачивать и записывать тексты песен в их ID3v2-тег, имеющийся в большинстве mp3-файлов. Далее загруженные тексты могут быть просмотрены во многих плеерах при воспроизведении песни. \n
+Developed by Miles Seventh, 2016\n
+\n
+ОТКАЗ ОТ ОТВЕТСТВЕННОСТИ\n
+Seventh Lyrics Manager распространяется Разработчиком \"как есть\" и \"со всеми ошибками\". Разработчик ни за что не отвечает и не дает никаких гарантий относительно безопасности, исправности, защищенности от вирусов, неточностей, опечаток или любых других опасных компонентов данного приложения. Только пользователь отвечает за осуществление безопасности и резервное копирование своих данных, так, Разработчик не несет ответственности за любой ущерб, понесенный в связи с использованием, модификацией или распространением данного приложения.\n
+\n
+СТОРОННИЕ КОМПОНЕНТЫ\n
+Приложение использует http://lyrics.wikia.com для получения текстов песен и библиотеку mp3agic (https://github.com/mpatric/mp3agic) для внесения изменений в ID3V2-тег.</string>
+</resources>
