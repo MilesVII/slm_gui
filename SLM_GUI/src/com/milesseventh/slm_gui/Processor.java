@@ -126,7 +126,7 @@ public class Processor implements Runnable {
 						} else {
 							//E: No ID3v2 tag or track title is null
 						}
-						console[_i] += " - " + friend.getString(R.string.ui_processed);
+						console[_i] = ">" + console[_i] + " - " + friend.getString(R.string.ui_processed);
 						_i++;
 						toProgress(_i);
 						refreshConsole();

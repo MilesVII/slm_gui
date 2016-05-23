@@ -38,7 +38,7 @@
     <string name="ui_notfound">Не найдено</string>
     <string name="ui_sumtotal">Всего</string>
     <string name="ui_loading">Загрузка&#8230;</string>
-    <string name="ui_lyrhere">Песни, текст которых содержит поисковый запрос, будет отображен здесь</string>
+    <string name="ui_lyrhere">Песни, текст которых содержит поисковый запрос, будут отображены здесь</string>
     <string name="ui_searchfor">Производится поиск по</string>
     <string name="ui_foundlyrshere">Файлы, содержащие поисковый запрос</string>
     <string name="ui_nothingwasfound">Ничего не найдено</string>

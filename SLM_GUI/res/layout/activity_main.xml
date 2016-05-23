@@ -29,6 +29,9 @@
             android:background="@drawable/button_custom"
             android:gravity="center_vertical|center_horizontal"
             android:minHeight="36dp"
+            android:minWidth="48dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:text="@string/ui_show" />
 
         <Button
@@ -39,6 +42,9 @@
             android:background="@drawable/button_custom"
             android:gravity="center_vertical|center_horizontal"
             android:minHeight="36dp"
+            android:minWidth="48dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:text="@string/ui_deselect" />
 
     </LinearLayout>

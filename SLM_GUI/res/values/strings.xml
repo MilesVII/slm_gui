@@ -28,7 +28,7 @@
     <string name="ui_erasing">Erasing&#8230;</string>
     <string name="ui_processing">Processing&#8230;</string>
     <string name="ui_processed">Processed</string>
-    <string name="ui_er_done">Their blood is on your hooves. The work is done.</string>
+    <string name="ui_er_done">The work is done.</string>
     <string name="ui_ok">Lyrics downloaded</string>
     <string name="ui_exist">Lyrics already exist. Ignored</string>
     <string name="ui_lnotfound">Lyrics not found</string>

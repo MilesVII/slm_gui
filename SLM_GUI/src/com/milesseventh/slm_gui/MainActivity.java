@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +42,7 @@ public class MainActivity extends Activity {
 		public void onClick(View callofktulu) {
 			Button _t = (Button) callofktulu;
 			if (_t.getText().equals("../")){
-				cd_command(cur_path.substring(0, cur_path.lastIndexOf("/")));
+				cd_return();
 			}else{
 				File _f = new File(cur_path + "/" + _t.getText().toString());
 				if (_f.isDirectory())
@@ -111,12 +112,27 @@ public class MainActivity extends Activity {
 	};
 	
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	    	if (findViewById(R.id.b_showsel) != null)
+	    		cd_return();
+	    	else
+	    		if (((Button)findViewById(R.id.pr_b_close)).isClickable())
+	    			((Button)findViewById(R.id.pr_b_close)).callOnClick();
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
 			PackageManager.PERMISSION_GRANTED){
 			ActivityCompat.requestPermissions(this, perm_stor, 1);
 		}//...
+		selection = new ArrayList<File>();
+		me = this;
 		sharedInit();
 	}
 	
@@ -125,10 +141,8 @@ public class MainActivity extends Activity {
 		list = (LinearLayout) findViewById(R.id.central);
 		cp_cap = (TextView) findViewById(R.id.curpathcaption);
 		sel_cap = (TextView) findViewById(R.id.selcaption);
-		selection = new ArrayList<File>();
 		((Button) findViewById(R.id.b_clearsel)).setOnClickListener(clearlistener);
 		((Button) findViewById(R.id.b_showsel)).setOnClickListener(showlistener);
-		me = this;
 		
 		cd_command(cur_path);
 		refreshSelectionCaption();
@@ -201,6 +215,9 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	private void cd_return (){
+		cd_command(cur_path.substring(0, cur_path.lastIndexOf("/")));
+	}
 	
 	public void addEntry (File _victim){
 		LinearLayout _ll = new LinearLayout(this);
