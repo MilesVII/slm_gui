@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".ProcessorActivity" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,19 +19,11 @@
             android:layout_gravity="center_vertical|start" />
 
         <Button
-            android:id="@+id/pr_b_abort"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_custom"
-            android:text="@string/ui_stop" />
-
-        <Button
             android:id="@+id/pr_b_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_custom"
-            android:text="@string/ui_close" />
-
+            android:text="@string/ui_stop" />
     </LinearLayout>
 
     <ProgressBar
@@ -47,14 +41,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/p_console"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-
         </LinearLayout>
     </ScrollView>
 

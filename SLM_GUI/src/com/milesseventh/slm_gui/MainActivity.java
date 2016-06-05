@@ -8,6 +8,7 @@ import java.util.Comparator;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -130,13 +131,12 @@ public class MainActivity extends Activity {
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
 			PackageManager.PERMISSION_GRANTED){
 			ActivityCompat.requestPermissions(this, perm_stor, 1);
-		}//...
+		}//Requesting sdcard access for API 23. Android developers are such assholes sometimes
 		selection = new ArrayList<File>();
 		me = this;
-		sharedInit();
-	}
-	
-	public void sharedInit(){//Doing this is a bad thing. Tho I have no choice.
+		/*NotificationPone.init(7);
+		NotificationPone.show(3);
+		NotificationPone.hide();*/
 		setContentView(R.layout.activity_main);
 		list = (LinearLayout) findViewById(R.id.central);
 		cp_cap = (TextView) findViewById(R.id.curpathcaption);
@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getGroupId() == R.id.group){
-			if (findViewById(R.id.selcaption) == null){
+			if (sel_cap == null){
 				return true;
 			}
 		}
@@ -181,15 +181,30 @@ public class MainActivity extends Activity {
 			_t.show(this.getFragmentManager(), "...");
 			return true;
 		case (R.id.act_gl):
-			Processor jack = new Processor(selection, Processor.COM_GL);
+			startProcessorActivity(ProcessorAPI.Command.GETL, selection, null);
 			return true;
 		case (R.id.act_search):
 			searchDialog();
 			return true;
+		case (R.id.action_settings):
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+		case (R.id.action_exit):
+			finish();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	
+	public void startProcessorActivity(ProcessorAPI.Command _com, ArrayList<File> _sel, String[] _meta){
+		Intent _bukake = new Intent(this, ProcessorActivity.class);
+		_bukake.setAction(Intent.ACTION_VIEW);
+		_bukake.putExtra(ProcessorActivity.EXTRA_COMMAND, _com);
+		_bukake.putExtra(ProcessorActivity.EXTRA_META, _meta);
+		_bukake.putExtra(ProcessorActivity.EXTRA_FILES, _sel);
+		startActivity(_bukake);
+	}
+	
 	public void cd_command (String _victim){
 		File _t = new File(_victim);
 		if (_t.exists() && _t.isDirectory() && !_t.getPath().equalsIgnoreCase("/")){

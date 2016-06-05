@@ -27,7 +27,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
 		}).setPositiveButton(getString(R.string.ui_continue), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				Processor jack = new Processor(_x, Processor.COM_BURNDOWN);
+				((MainActivity)getActivity()).startProcessorActivity(ProcessorAPI.Command.BURNDOWN, _x, null);
 			}
 		});
 		return _builder.create();

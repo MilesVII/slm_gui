@@ -7,7 +7,6 @@
     <string name="menu_bd">Удалить тексты из файлов</string>
     <string name="menu_sl">Показать текст песни</string>
     <string name="menu_search">Поиск в текстах</string>
-    <string name="app_name_x">Seventh Lyrics Manager</string>
     <string name="ui_set">Редактировать текст</string>
     <string name="ui_e">Ошибка</string>
     <string name="ui_e_id3v2">ID3v2-тег не найден</string>
@@ -29,7 +28,7 @@
     <string name="ui_processing">Обрабатывается&#8230;</string>
     <string name="ui_processed">Обработано</string>
     <string name="ui_er_done">Все тексты песен успешно стерты</string>
-    <string name="ui_ok">Текст загружен</string>
+    <string name="ui_ok">ОК</string>
     <string name="ui_exist">Файл уже имеет текст. Пропущено</string>
     <string name="ui_lnotfound">Текст не найден</string>
     <string name="ui_done">Готово!</string>
@@ -63,5 +62,11 @@ Developed by Miles Seventh, 2016\n
 Seventh Lyrics Manager распространяется Разработчиком \"как есть\" и \"со всеми ошибками\". Разработчик ни за что не отвечает и не дает никаких гарантий относительно безопасности, исправности, защищенности от вирусов, неточностей, опечаток или любых других опасных компонентов данного приложения. Только пользователь отвечает за осуществление безопасности и резервное копирование своих данных, так, Разработчик не несет ответственности за любой ущерб, понесенный в связи с использованием, модификацией или распространением данного приложения.\n
 \n
 СТОРОННИЕ КОМПОНЕНТЫ\n
-Приложение использует http://lyrics.wikia.com для получения текстов песен и библиотеку mp3agic (https://github.com/mpatric/mp3agic) для внесения изменений в ID3V2-тег.</string>
+Приложение использует http://lyrics.wikia.com для получения текстов песен и библиотеку mp3agic (https://github.com/mpatric/mp3agic) для внесения изменений в ID3V2-тег.\n
+\n
+КОНТАКТЫ\n
+http://github.com/MilesVII/slm_gui\n
+milesseventh@gmail.com</string>
+    <string name="ui_settings">Настройки</string>
+    <string name="ui_exit">Закрыть приложение</string>
 </resources>

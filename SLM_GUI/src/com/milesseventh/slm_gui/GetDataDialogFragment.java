@@ -12,7 +12,6 @@ import android.widget.TextView;
 public class GetDataDialogFragment extends DialogFragment {
 	private TextView artistV, titleV;
 	private String artist, title;
-	private Processor jack;
 	private View inflated;
 	private boolean presetdata = false;
 	
@@ -40,8 +39,11 @@ public class GetDataDialogFragment extends DialogFragment {
 			public void onClick(DialogInterface arg0, int arg1) {
 				String _art = artistV.getText().toString().trim();
 				String _tit = titleV.getText().toString().trim();
-				if (!_art.equals("") && !_tit.equals(""))
-					jack = new Processor(_art, _tit, ((CheckBox)getDialog().findViewById(R.id.gd_forcecase)).isChecked());
+				if (!_art.equals("") && !_tit.equals("")){
+					String[] _meta = {_art, _tit, ((CheckBox)getDialog().findViewById(R.id.gd_forcecase)).isChecked()?"true":"cake"};
+					//jack = new Processor(_art, _tit, ((CheckBox)getDialog().findViewById(R.id.gd_forcecase)).isChecked());
+					((MainActivity)getActivity()).startProcessorActivity(ProcessorAPI.Command.SHOWL, null, _meta);
+				}
 			}
 		});
 		return _builder.create();

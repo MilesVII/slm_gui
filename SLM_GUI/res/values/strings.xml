@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">Seventh Lyrics Manager</string>
@@ -7,7 +8,6 @@
     <string name="menu_bd">Erase Lyrics</string>
     <string name="menu_sl">Show Lyrics</string>
     <string name="menu_search">Search in Lyrics</string>
-    <string name="app_name_x">Seventh Lyrics Manager</string>
     <string name="ui_set">Set Lyrics</string>
     <string name="ui_e">Error</string>
     <string name="ui_e_id3v2">ID3v2 tag wasn\'t found</string>
@@ -29,7 +29,7 @@
     <string name="ui_processing">Processing&#8230;</string>
     <string name="ui_processed">Processed</string>
     <string name="ui_er_done">The work is done.</string>
-    <string name="ui_ok">Lyrics downloaded</string>
+    <string name="ui_ok">OK</string>
     <string name="ui_exist">Lyrics already exist. Ignored</string>
     <string name="ui_lnotfound">Lyrics not found</string>
     <string name="ui_done">Done!</string>
@@ -63,5 +63,12 @@ DISCLAIMER\n
 Seventh Lyrics Manager is provided by Miles Seventh "as is" and "with all faults". Developer makes no representations or warranties of any kind concerning the safety, suitability, lack of viruses, inaccuracies, typographical errors, or other harmful components of this software. You are solely responsible for the protection of your equipment and backup of your data, and the Developer will not be liable for any damages you may suffer in connection with using, modifying, or distributing this software.\n
 \n
 THIRD PARTY COMPONENTS\n
-Application uses http://lyrics.wikia.com to fetch lyrics and mp3agic library (https://github.com/mpatric/mp3agic) to access ID3V2 tag.</string>
+Application uses http://lyrics.wikia.com to fetch lyrics and mp3agic library (https://github.com/mpatric/mp3agic) to access ID3V2 tag.\n
+\n
+CONTACTS\n
+http://github.com/MilesVII/slm_gui\n
+milesseventh@gmail.com</string>
+    <string name="ui_settings">Settings</string>
+    <string name="ui_exit">Close App</string>
+
 </resources>

@@ -31,7 +31,9 @@ public class SearchDialogFragment extends DialogFragment {
 			public void onClick(DialogInterface arg0, int arg1) {
 				String _q = ((TextView)getDialog().findViewById(R.id.sq_field)).getText().toString().trim();
 				if (!_q.equals("")){
-					Processor jack = new Processor(_x, _q, true /*or false. Nevermind*/);
+					//Processor jack = new Processor(_x, _q, true /*or false. Nevermind*/);
+					String[] _meta = {_q};
+					((MainActivity)getActivity()).startProcessorActivity(ProcessorAPI.Command.SEARCH, _x, _meta);
 				}
 			}
 		});
