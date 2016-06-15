@@ -40,7 +40,7 @@ public class ProcessorService extends IntentService {
 		default:
 			return;
 		}
-		
+
 		jack.start();
     }
 

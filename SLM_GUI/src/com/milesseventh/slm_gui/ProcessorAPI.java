@@ -46,15 +46,22 @@ public class ProcessorAPI implements Runnable {
 	private Command mode = Command.INDETERMINATE;
 	private String artist, title, query, searchCapacitor = "";
 	private boolean forcecase;
-	private ArrayList<File> processingList;
-	private int redir_amount = 0;
+	private ArrayList<File> processingList, searchResult = new ArrayList<File>();
+	private int redir_amount = 0, glr_ok = 0, glr_nf = 0, 
+				glr_nt = 0, glr_er = 0, glr_ex = 0;
 	private ProcessorListener listener;
 	
 	public interface ProcessorListener{
 		public void onStart (Command _mode);
 		public void onFileStarted(int _position);
 		public void onFileProcessed (int _position, Result _result);
+		public void onError (Exception _ex);
 		public void onComplete (String _result, Command _mode);
+		public void onShowLComplete (String _result, boolean _found);
+		public void onGetLComplete (int _ok, int _nf, int _nt, int _er, int _ex);
+		//Ok, Not Found, No Tag, Error, Existing Lyrics
+		public void onBurndownLComplete ();
+		public void onSearchComplete (ArrayList<File> _result);
 	}
 	
 	ProcessorAPI(ProcessorListener _l){
@@ -99,6 +106,7 @@ public class ProcessorAPI implements Runnable {
 	public void run() {
 			if (mode == Command.SHOWL){
 				String _lyr = pullLyrics(artist, title, 0, forcecase);
+				listener.onShowLComplete(_lyr, _lyr != "NF");
 				listener.onComplete(_lyr, mode);
 			}else{
 				//Common filerunner
@@ -113,12 +121,24 @@ public class ProcessorAPI implements Runnable {
 						return;
 					}
 				}
-				listener.onComplete(searchCapacitor, mode);//
 				/*
 				 * If processor implements SEARCH command, searchCapacitor is filled 
 				 * with search results and will be thrown on the outside
 				 * Else, searchCapacitor is always empty;
 				 */
+				switch(mode){
+				case BURNDOWN:
+					listener.onBurndownLComplete();
+					break;
+				case GETL:
+					listener.onGetLComplete(glr_ok, glr_nf, glr_nt, glr_er, glr_ex);
+					break;
+				case SEARCH:
+					listener.onSearchComplete(searchResult);
+					break;
+				default:
+				}
+				listener.onComplete(searchCapacitor, mode);
 			}
 			active = false;
 	}
@@ -127,10 +147,12 @@ public class ProcessorAPI implements Runnable {
 		Result _R = Result.INDETERMINATE;
 		try{
 			Mp3File _victim;
+			String _lyr;
 			switch(mode){
 			case BURNDOWN:
 				_victim = new Mp3File (_unicorn);
-				if (_victim.getId3v2Tag().getTitle() != null){
+				
+				if (_victim.hasId3v2Tag() && _victim.getId3v2Tag().getTitle() != null){
 					_victim.getId3v2Tag().removeLyrics();
 					//Lyrics erased
 					_victim.save(_unicorn.getPath()+".x");
@@ -139,16 +161,25 @@ public class ProcessorAPI implements Runnable {
 				} else
 					return Result.NOTAG;
 			case GETL:
-				String _lyr = pullLyricsBind(_unicorn, true);
-				redir_amount = 0;
-				if (_lyr == "NF"){
-					return Result.NOTFOUND;
-				} else if (_lyr == "NT"){
-					return Result.NOTAG;
-				} else if (_lyr.startsWith("EXIMAGIK:")){
-					return Result.EXISTING;
-				} else {
-					return Result.OK;
+				try{
+					_lyr = pullLyricsBind(_unicorn, true);
+					redir_amount = 0;
+					if (_lyr == "NF"){
+						glr_nf++;
+						return Result.NOTFOUND;
+					} else if (_lyr == "NT"){
+						glr_nt++;
+						return Result.NOTAG;
+					} else if (_lyr.startsWith("EXIMAGIK:")){
+						glr_ex++;
+						return Result.EXISTING;
+					} else {
+						glr_ok++;
+						return Result.OK;
+					}
+				} catch (Exception ex){
+					glr_er++;
+					return Result.ERR;
 				}
 			case SEARCH:
 				_victim = new Mp3File (_unicorn);
@@ -158,6 +189,7 @@ public class ProcessorAPI implements Runnable {
 					if (_lyr != null)
 						if (_lyr.toLowerCase().contains(query)){
 							searchCapacitor += _unicorn.getName() + "\n";
+							searchResult.add(_unicorn);
 							return Result.OK;
 						}
 				}
@@ -166,11 +198,8 @@ public class ProcessorAPI implements Runnable {
 				return Result.ERR;
 			}
 		} catch(Exception ex){
+			listener.onError(ex);
 			return Result.ERR;
-			/*
-			complete();
-			toUI(ui_status, friend.getString(R.string.ui_e_crit));
-			toUI(ui_console, ex.getMessage() + "/" + ex.getLocalizedMessage());*/
 		}
 	}
 	
@@ -181,7 +210,7 @@ public class ProcessorAPI implements Runnable {
 	public String pullLyricsBind (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException{
 		Mp3File _victim = new Mp3File(_unicorn);
 		ID3v2 _victimtag = _victim.getId3v2Tag();
-		if(_victimtag.getTitle() == null)
+		if(!_victim.hasId3v2Tag() || _victimtag.getTitle() == null)
 			return("NT");
 		boolean trywithoutparesis = false;
 		if (_victimtag.getLyrics() == null){
