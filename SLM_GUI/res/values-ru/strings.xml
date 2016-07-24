@@ -69,6 +69,26 @@ Seventh Lyrics Manager распространяется Разработчико
 http://github.com/MilesVII/slm_gui\n
 milesseventh@gmail.com</string>
     <string name="ui_settings">Настройки</string>
+    <string name="ui_showing_big_selection_warning">Выбрано слишком много файлов. Составление и отображение списка может занять некоторое время. Продолжить?</string>
     <string name="ui_exit">Закрыть приложение</string>
+    
+    
     <string name="ui_set_shownots">Отображать уведомления</string>
+    <string name="ui_set_foc">Автоматически закрывать окно обработки</string>
+    <string name="ui_set_showtag">Отображать название песни вместо имени файла (Снижает скорость работы!)</string>
+    <string name="ui_set_foc_short">Автоматическое закрытие</string>
+    <string name="ui_set_showtag_short">Названия песен</string>
+    <string name="ui_set_queue_limit_short">Ограничение длины очереди</string>
+    <string name="ui_set_queue_limit">Число файлов, при обработке которых используется обычный вневшний вид. При превышении будет использован упрощенный вид.</string>
+    
+    
+    <string name="ui_sdfix_caution">Похоже, версия вашей ОС - Android 4.4 или выше. Проблема в том, что приложение не может производить запись данных в файлы без внесения некоторых изменений в системные настройки. Данная операция безвредна и не влияет на стабильность работы устройства. Без нее приложение не сможет производить запись на память устройства, хотя такие функции, как просмотр текстов будут по-прежнему доступны. Продолжить и внести изменения?</string>
+	<string name="ui_sdfix_done">Готово! Перезагрузите устройство, чтобы изменения вступили в силу.</string>
+    <string name="ui_sdfix_e">Не удалось внести изменения. Мы пытались.</string>
+    
+    <string name="ui_stat_wait">Файл стоит в очереди на обработку</string>
+    <string name="ui_stat_processing">Файл обрабатывается</string>
+    <string name="ui_stat_processed">Файл обработан</string>
+    
+    
 </resources>

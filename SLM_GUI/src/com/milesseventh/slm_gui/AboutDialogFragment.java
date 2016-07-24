@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.util.Linkify;
+import android.widget.TextView;
 
-public class InfoDialogFragment extends DialogFragment {
+public class AboutDialogFragment extends DialogFragment {
 	private String title = "", text = "";
 	
 	public void setData (String _title, String _text){
@@ -17,10 +19,10 @@ public class InfoDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
-		//TextView _tv = new TextView(MainActivity.me);
-		//_tv.setText(text);
-		//Linkify.addLinks(_tv, Linkify.ALL);
-		_builder.setTitle(title).setMessage(text).setNeutralButton(R.string.ui_close, new DialogInterface.OnClickListener() {
+		TextView _tv = new TextView(MainActivity.me);
+		_tv.setText(text);
+		Linkify.addLinks(_tv, Linkify.ALL);
+		_builder.setTitle(title).setView(_tv).setNeutralButton(R.string.ui_close, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				

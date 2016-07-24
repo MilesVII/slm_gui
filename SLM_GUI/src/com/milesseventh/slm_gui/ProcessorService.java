@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
-//import com.milesseventh.slm_gui.ProcessorAPI;
 
 public class ProcessorService extends IntentService {
-	private ArrayList<File> pl;
+	//private ArrayList<File> pl;
 	private ProcessorAPI.Command mode;
 	
 	public ProcessorService() {
 		super("ProcessorService");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
     protected void onHandleIntent(Intent _int) {
         Bundle _instructions = _int.getExtras();

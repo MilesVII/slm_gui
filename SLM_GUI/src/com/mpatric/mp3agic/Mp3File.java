@@ -385,7 +385,7 @@ public class Mp3File extends FileWrapper {
 	}
 	
 	public boolean hasId3v2Tag() {
-		return id3v2Tag != null;
+		return (id3v2Tag != null && getId3v2Tag().getTitle() != null);
 	}
 
 	public ID3v2 getId3v2Tag() {

@@ -28,7 +28,13 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 	public void setTitle (String _file){
 		host = _file;
 	}
-	
+	//FUCK THAT SHIT
+	//AAAAAAAAAAAA!
+	//NO WAY IN HELL I GONNA TRY TO FIX THIS
+	//DAMNATION IS ITS NAME
+	//AND IT SHALL FALL
+	//SO SAY YOUR LAST PRAYER
+	//AND GET READY TO TURN INTO ASHES
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
@@ -50,13 +56,13 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 							   _mudpone.getTitle());
 					_t.show(MainActivity.me.getFragmentManager(), "...");
 				} catch (UnsupportedTagException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_id3v2));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_id3v2) + ": " + e.getMessage());
 					e.printStackTrace();
 				} catch (InvalidDataException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_inv_data));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_inv_data) + ": " + e.getMessage());
 					e.printStackTrace();
 				} catch (IOException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_io));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_io) + ": " + e.getMessage());
 					e.printStackTrace();
 				}
 				getDialog().dismiss();
@@ -88,8 +94,6 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 	
 	private void showEditor(final String _file){
 		Builder _builder = new Builder(getActivity());
-		//LinearLayout _ll = new LinearLayout(MainActivity.me);
-		//_ll.setOrientation(LinearLayout.VERTICAL);
 		
 		final EditText editor = new EditText(MainActivity.me);
 		editor.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -97,15 +101,15 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 		try {
 			editor.setText(new Mp3File (_file).getId3v2Tag().getLyrics());
 		} catch (UnsupportedTagException e) {
-			MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_id3v2));
+			MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_id3v2) + ": " + e.getMessage());
 			e.printStackTrace();
 			return;
 		} catch (InvalidDataException e) {
-			MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_inv_data));
+			MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_inv_data) + ": " + e.getMessage());
 			e.printStackTrace();
 			return;
 		} catch (IOException e) {
-			MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_io));
+			MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_io) + ": " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
@@ -124,19 +128,19 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 					ProcessorAPI.overkill(new File(_file), new File(_file + ".x"));
 					Toast.makeText(MainActivity.me.getApplicationContext(), R.string.ui_saved, Toast.LENGTH_SHORT).show();
 				} catch (UnsupportedTagException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_id3v2));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_id3v2) + ": " + e.getMessage());
 					e.printStackTrace();
 					return;
 				} catch (InvalidDataException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_inv_data));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_inv_data) + ": " + e.getMessage());
 					e.printStackTrace();
 					return;
 				} catch (IOException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_io));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_io) + ": " + e.getMessage());
 					e.printStackTrace();
 					return;
 				} catch (NotSupportedException e) {
-					MainActivity.showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_e_notsup));
+					MainActivity.showInfoDialog(MainActivity.me, getString(R.string.ui_e), getString(R.string.ui_e_notsup) + ": " + e.getMessage());
 					e.printStackTrace();
 					return;
 				}

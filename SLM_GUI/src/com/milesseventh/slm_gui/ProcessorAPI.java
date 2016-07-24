@@ -16,20 +16,9 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
-/*import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;*/
-
 public class ProcessorAPI implements Runnable {
 	/*
-	 * This class isn't connected to any other. You can use it in your own application,
+	 * This class isn't connected to any other. You can use it in your own application with customized mp3agic lib,
 	 * just instantiate it with constructor, defining listener, then set params by one of
 	 * these methods: setBatchParams(), setShowLyrsParams() or setSearchParams(), 
 	 * and invoke start() method.
@@ -55,7 +44,7 @@ public class ProcessorAPI implements Runnable {
 		public void onStart (Command _mode);
 		public void onFileStarted(int _position);
 		public void onFileProcessed (int _position, Result _result);
-		public void onError (Exception _ex);
+		public void onError (File _errorfile, Exception _ex);
 		public void onComplete (String _result, Command _mode);
 		public void onShowLComplete (String _result, boolean _found);
 		public void onGetLComplete (int _ok, int _nf, int _nt, int _er, int _ex);
@@ -115,7 +104,11 @@ public class ProcessorAPI implements Runnable {
 				for (File _unicorn : processingList){
 					if (active){
 						listener.onFileStarted(_i);
-						listener.onFileProcessed(_i, process(_unicorn));
+						//listener.onFileProcessed(_i, process(_unicorn));
+						Result ___ = process(_unicorn);
+						if (active)
+							listener.onFileProcessed(_i, ___);
+						else return;
 						_i++;
 					}else{
 						return;
@@ -125,6 +118,8 @@ public class ProcessorAPI implements Runnable {
 				 * If processor implements SEARCH command, searchCapacitor is filled 
 				 * with search results and will be thrown on the outside
 				 * Else, searchCapacitor is always empty;
+				 *//*
+				 * I have no idea how to do it right. Sorry
 				 */
 				switch(mode){
 				case BURNDOWN:
@@ -144,7 +139,6 @@ public class ProcessorAPI implements Runnable {
 	}
 	
 	private Result process(File _unicorn){
-		Result _R = Result.INDETERMINATE;
 		try{
 			Mp3File _victim;
 			String _lyr;
@@ -162,7 +156,7 @@ public class ProcessorAPI implements Runnable {
 					return Result.NOTAG;
 			case GETL:
 				try{
-					_lyr = pullLyricsBind(_unicorn, true);
+					_lyr = pullLyricsWrapper(_unicorn, true);
 					redir_amount = 0;
 					if (_lyr == "NF"){
 						glr_nf++;
@@ -198,7 +192,7 @@ public class ProcessorAPI implements Runnable {
 				return Result.ERR;
 			}
 		} catch(Exception ex){
-			listener.onError(ex);
+			listener.onError(_unicorn, ex);
 			return Result.ERR;
 		}
 	}
@@ -207,10 +201,10 @@ public class ProcessorAPI implements Runnable {
 	//This code is really old
 	//Be quiet
 	
-	public String pullLyricsBind (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException{
+	public String pullLyricsWrapper (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException{
 		Mp3File _victim = new Mp3File(_unicorn);
 		ID3v2 _victimtag = _victim.getId3v2Tag();
-		if(!_victim.hasId3v2Tag() || _victimtag.getTitle() == null)
+		if(!_victim.hasId3v2Tag()/* || _victimtag.getTitle() == null*/)//hasid3v2tag is modified
 			return("NT");
 		boolean trywithoutparesis = false;
 		if (_victimtag.getLyrics() == null){

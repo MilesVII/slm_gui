@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import com.milesseventh.slm_gui.sdfix.SDFix;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +36,7 @@ public class MainActivity extends Activity {
 	private LinearLayout list;
 	private File[] _unicorn;
 	private TextView sel_cap, cp_cap;
+	private boolean showtagtitle;
 	public String cur_path = "/storage";
 	public ArrayList<File> selection;
 	public static MainActivity me;
@@ -41,11 +44,11 @@ public class MainActivity extends Activity {
 	private final OnClickListener entrylistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
-			Button _t = (Button) callofktulu;
-			if (_t.getText().equals("../")){
+			UiEntry _t = (UiEntry) callofktulu;
+			if (_t.getCaption().equals("../"))
 				cd_return();
-			}else{
-				File _f = new File(cur_path + "/" + _t.getText().toString());
+			else {
+				File _f = new File(cur_path + "/" + _t.getCaption().toString());
 				if (_f.isDirectory())
 					cd_command(_f.getPath());
 			}
@@ -55,8 +58,8 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onLongClick(View callofktulu) {
 			CustomContextMenuDialogFragment _t = new CustomContextMenuDialogFragment();
-			_t.setTitle(cur_path + "/" + ((Button)callofktulu).getText().toString());
-			_t.show(MainActivity.me.getFragmentManager(), "...");
+			_t.setTitle(((UiEntry)callofktulu).getFile().getPath());
+			_t.show(getFragmentManager(), "...");
 			return true;
 		}
 	};
@@ -71,18 +74,33 @@ public class MainActivity extends Activity {
 	private final OnClickListener showlistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
-			String _t = "";
-			for (File _horsey : selection)
-				_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
-			if (_t.equals(""))
-				_t = getString(R.string.ui_nfs);
-			showInfoDialog(getString(R.string.ui_selection), _t);
+			final Runnable _fuckmepleaseimbegging = new Runnable() {
+				@Override
+				public void run() {
+					String _t = "";
+					for (File _horsey : selection)
+						_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
+					if (_t.equals(""))
+						_t = getString(R.string.ui_nfs);
+					showInfoDialog(me, getString(R.string.ui_selection), _t);
+				}
+			};
+			if (ReceptionActivity.loadQueueLimitFromPreferences(me) < selection.size()){
+				showConfirmationDialog(getString(R.string.ui_showing_big_selection_warning), new Confirmator.ConfirmatorListener() {
+					@Override
+					public void action() {
+						_fuckmepleaseimbegging.run();
+					}
+				});
+			}else{
+				_fuckmepleaseimbegging.run();
+			}
 		}
 	};
 	private final OnCheckedChangeListener checklistener = new OnCheckedChangeListener() {
 		@Override
 		public void onCheckedChanged(CompoundButton callofktulu, boolean _hoof) {
-			File _freehugs = ((CheckBoxBind)callofktulu).getHost();
+			File _freehugs = ((CheckBoxWrapper)callofktulu).getHost();
 			if (_freehugs.isDirectory()){
 				if (_hoof){
 					addSubFiles(_freehugs, selection);
@@ -99,10 +117,8 @@ public class MainActivity extends Activity {
 			refreshSelectionCaption();
 		}
 	};
-	private Comparator ls_comp = new Comparator(){
-		public int compare(Object o1, Object o2){
-			File f1 = (File) o1;
-			File f2 = (File) o2;
+	private Comparator<File> ls_comp = new Comparator<File>(){
+		public int compare(File f1, File f2){
 			if(f1.isDirectory() && !f2.isDirectory())
 				return -1;
 			else if (!f1.isDirectory() && f2.isDirectory())
@@ -128,15 +144,38 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//Getting additional permissions to access filesystem
+		//Requesting sdcard access for API 23. Android developers are such assholes sometimes
 		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
 			PackageManager.PERMISSION_GRANTED){
 			ActivityCompat.requestPermissions(this, perm_stor, 1);
-		}//Requesting sdcard access for API 23. Android developers are such assholes sometimes
+		}
+		//And for API 20+ too
+		if (android.os.Build.VERSION.SDK_INT > 18 && android.os.Build.VERSION.SDK_INT < 23){
+			try {
+				if (!SDFix.isRemovableStorageWritableFixApplied()){
+					showConfirmationDialog(getString(R.string.ui_sdfix_caution), new Confirmator.ConfirmatorListener() {
+						@Override
+						public void action() {
+							try {
+								SDFix.fixPermissions(MainActivity.me);
+								showInfoDialog(me, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
+							} catch (Exception e) {
+								showInfoDialog(me, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		
 		selection = new ArrayList<File>();
 		me = this;
-		/*NotificationPone.init(7);
-		NotificationPone.show(3);
-		NotificationPone.hide();*/
+		
 		setContentView(R.layout.activity_main);
 		list = (LinearLayout) findViewById(R.id.central);
 		cp_cap = (TextView) findViewById(R.id.curpathcaption);
@@ -150,7 +189,6 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -164,21 +202,24 @@ public class MainActivity extends Activity {
 		}
 		if ((item.getItemId() == R.id.act_bd || item.getItemId() == R.id.act_gl || 
 				item.getItemId() == R.id.act_search) && selection.isEmpty()){
-				showInfoDialog(getString(R.string.ui_e), getString(R.string.ui_nfs));
+				showInfoDialog(this, getString(R.string.ui_e), getString(R.string.ui_nfs));
 				return true;
 		}
 		
 		switch (item.getItemId()){
 		case (R.id.action_about):
-			showInfoDialog(getString(R.string.menu_about), getString(R.string.about_content));
+			showAboutDialog(this, getString(R.string.menu_about), getString(R.string.about_content));
 			return true;
 		case (R.id.act_sl):
 			getDataDialog();
 			return true;
 		case (R.id.act_bd):
-			ConfirmationDialogFragment _t = new ConfirmationDialogFragment();
-			_t.setList(selection);
-			_t.show(this.getFragmentManager(), "...");
+			showConfirmationDialog(getString(R.string.ui_er_alert), new Confirmator.ConfirmatorListener(){
+				@Override
+				public void action() {
+					startProcessorActivity(ProcessorAPI.Command.BURNDOWN, selection, null);
+				}
+			});
 			return true;
 		case (R.id.act_gl):
 			startProcessorActivity(ProcessorAPI.Command.GETL, selection, null);
@@ -207,6 +248,7 @@ public class MainActivity extends Activity {
 	
 	public void cd_command (String _victim){
 		File _t = new File(_victim);
+		showtagtitle = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_tagtitle", false);
 		if (_t.exists() && _t.isDirectory() && !_t.getPath().equalsIgnoreCase("/")){
 			list.removeAllViews();
 			if (!cur_path.equals("/"))
@@ -234,30 +276,9 @@ public class MainActivity extends Activity {
 		cd_command(cur_path.substring(0, cur_path.lastIndexOf("/")));
 	}
 	
-	public void addEntry (File _victim){
-		LinearLayout _ll = new LinearLayout(this);
-		_ll.setOrientation(LinearLayout.HORIZONTAL);
-		
-		CheckBoxBind _tb = new CheckBoxBind(this, _victim);
-		_tb.setEnabled(!_victim.getName().equals(".."));
-		_tb.setChecked(checksync(_victim));
-		_tb.setGravity(Gravity.CENTER_VERTICAL + Gravity.CENTER_HORIZONTAL);
-		_tb.setOnCheckedChangeListener(checklistener);
-		
-		Button _go = new Button(this);
-		_go.setBackgroundResource(R.drawable.button_custom);//hmm. i wonder if there any way to illuminate the whole entry
-		_go.setText(_victim.getName() + (_victim.isDirectory()?"/":""));
-		_go.setLayoutParams(entrylp);
-		_go.setGravity(Gravity.START + Gravity.CENTER_VERTICAL);
-		_go.setClickable(_victim.isDirectory());
-		_go.setOnClickListener(entrylistener);
-		if (_victim.isFile())
-			_go.setOnLongClickListener(cmlistener);
-		
-		_ll.addView(_tb);
-		_ll.addView(_go);
-		
-		list.addView(_ll);
+	private void addEntry (File _victim){
+		list.addView(new UiFileEntry (this, _victim, showtagtitle, checksync(_victim), 
+									  checklistener, entrylistener, cmlistener));
 	}
 	
 	public boolean checksync (File _file){
@@ -300,10 +321,23 @@ public class MainActivity extends Activity {
 		sel_cap.setText(getString(R.string.ui_fs) + ": " + Integer.toString(selection.size()));
 	}
 
-	public static void showInfoDialog(String _title, String _text){
+	private void showConfirmationDialog(String _txt, Confirmator.ConfirmatorListener _action){
+		Confirmator _t = new Confirmator();
+		_t.setAction(_action);
+		_t.setText(_txt);
+		_t.show(this.getFragmentManager(), "...");
+	}
+	
+	public static void showInfoDialog(Activity _ctxt, String _title, String _text){
 		InfoDialogFragment _t = new InfoDialogFragment();
 		_t.setData(_title, _text);
-		_t.show(MainActivity.me.getFragmentManager(), "...");
+		_t.show(_ctxt.getFragmentManager(), "...");
+	}
+	
+	private void showAboutDialog(Activity _ctxt, String _title, String _text){
+		AboutDialogFragment _t = new AboutDialogFragment();
+		_t.setData(_title, _text);
+		_t.show(_ctxt.getFragmentManager(), "...");
 	}
 	
 	private void getDataDialog(){

@@ -12,31 +12,42 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProcessorActivity extends Activity {
 	public static ProcessorActivity me;//I have to use it only to send "behavior" to ProcessorService.
-	public ProcessorAPI processor;//And for this too
+	public ProcessorAPI processor;
 	public static final String EXTRA_FILES = "com.milesseventh.slm_gui.ef", 
 							   EXTRA_COMMAND = "com.milesseventh.slm_gui.com",
 							   EXTRA_META = "com.milesseventh.slm_gui.meta",
 							   EXTRA_BEHAVIOR = "com.milesseventh.slm_gui.bh";
 	private Intent processorIntent;
-	private ProcessorAPI.Command mode;
-	private String[] console;
+	//private ProcessorAPI.Command mode;
+	//private String[] console;
 	private ArrayList<File> processing_list;
+	private UiProcessingEntry[] entries;
 	private TextView ui_status, ui_console;
 	private ProgressBar ui_progress;
+	private LinearLayout ui_list;
 	private Button ui_close;
-	private boolean stoped = false;
+	private boolean stoped = false, simplifyUI = false;
 	private NotificationPone shoutingHorsey;
+	private final OnClickListener entrylistener = new OnClickListener() {
+		@Override
+		public void onClick(View callofktulu) {
+			UiProcessingEntry _t = (UiProcessingEntry) callofktulu;
+			MainActivity.showInfoDialog(me, _t.getTitle(), _t.getStatus());
+		}
+	};
 	public ProcessorAPI.ProcessorListener behavior = new ProcessorAPI.ProcessorListener(){
 		@Override
 		public void onStart(Command _mode) {
@@ -69,46 +80,76 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onFileStarted(int _position) {
-			refreshConsole(markoutConsoleEntry(_position));
+		public void onFileStarted(final int _position) {
+			if (!simplifyUI)
+				entries[_position].setStatus(me, getString(R.string.ui_stat_processing), 
+											 R.drawable.pointer);
+			else
+				runOnUiThread(new Runnable(){
+					@Override
+					public void run(){
+						ui_console.setText(processing_list.get(_position) + ": " + 
+										   getString(R.string.ui_stat_processing) +
+										   " (" + (_position + 1) + '/' + 
+										   processing_list.size() + ')');
+					}
+				});
+			//refreshConsole(markoutConsoleEntry(_position));
 		}
 
 		@Override
 		public void onFileProcessed(final int _position, Result _result) {
-			String _temp;
+			final String _temp;
+			final int _ico;
 			switch(_result){
 			case OK:
 				_temp = getString(R.string.ui_ok);
+				_ico = R.drawable.ok;
 				break;
 			case EXISTING:
 				_temp = getString(R.string.ui_exist);
+				_ico = R.drawable.ok;
 				break;
 			case NOTAG:
 				_temp = getString(R.string.ui_e_id3v2);
+				_ico = R.drawable.error;
 				break;
 			case ERR:
 				_temp = getString(R.string.ui_e);
+				_ico = R.drawable.error;
 				break;
 			case NOTFOUND:
 				_temp = getString(R.string.ui_notfound);
+				_ico = R.drawable.warning;
 				break;
 			default:
 				_temp = "?!";
+				_ico = R.drawable.error;
 			}
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
 					ui_progress.setProgress(_position + 1);
 					shoutingHorsey.show(_position + 1);
+					if (!simplifyUI)
+						entries[_position].setStatus(me, getString(R.string.ui_stat_processed) + 
+														": " + _temp, _ico);
 				}
 			});
-			console[_position] += " - " + _temp;
-			refreshConsole(console);
+			//console[_position] += " - " + _temp;
+			//refreshConsole(console);
 		}
 
 		@Override
-		public void onError(Exception _ex) {
+		public void onError(final File _errorfile, final Exception _ex) {
 			_ex.printStackTrace();
+			runOnUiThread(new Runnable(){
+				@Override
+				public void run(){
+					if (simplifyUI)
+						addEntry(_errorfile).setStatus(me, _ex.getMessage(), R.drawable.error);
+				}
+			});
 		}
 		
 		@Override
@@ -118,9 +159,14 @@ public class ProcessorActivity extends Activity {
 				public void run(){
 					if (_mode != Command.SHOWL)
 						shoutingHorsey.say(getString(R.string.ui_done));
+					if (simplifyUI)
+						ui_list.removeView(ui_console);
 					stopOrFinish(ui_close);
 				}
 			});
+			if(PreferenceManager.getDefaultSharedPreferences(me)
+			   .getBoolean("finish_on_complete", false))
+				stopOrFinish(ui_close);
 		}
 
 		@Override
@@ -182,7 +228,7 @@ public class ProcessorActivity extends Activity {
 			
 		}
 	};
-
+	/////End of behavior defining/////
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -194,27 +240,35 @@ public class ProcessorActivity extends Activity {
 	    return super.onKeyDown(keyCode, event);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle _sI) {
 		super.onCreate(_sI);
+
 		me = this;
-		shoutingHorsey = new NotificationPone(this);
-		processorIntent = new Intent(this, ProcessorService.class);
 		Bundle _instructions = getIntent().getExtras();
-		mode = (ProcessorAPI.Command) _instructions.get(EXTRA_COMMAND);
+		processing_list = (ArrayList<File>) _instructions.get(EXTRA_FILES);
+		shoutingHorsey = new NotificationPone(this);
+		
 		setContentView(R.layout.processing);
 		ui_status = (TextView) findViewById(R.id.p_status);
+		ui_list = (LinearLayout) findViewById(R.id.p_list);
 		ui_console = (TextView) findViewById(R.id.p_console);
 		ui_close = (Button) findViewById(R.id.pr_b_close);
 		ui_progress = (ProgressBar) findViewById(R.id.p_progress);
-		processing_list = (ArrayList<File>) _instructions.get(EXTRA_FILES);
+		
 		if (processing_list != null){
+			simplifyUI = ReceptionActivity.loadQueueLimitFromPreferences(this) < processing_list.size();
+			if (!simplifyUI){
+				ui_list.removeView(ui_console);
+				entries = new UiProcessingEntry[processing_list.size()];
+				for(int _hh = 0; _hh < processing_list.size(); _hh++)
+					entries[_hh] = addEntry(processing_list.get(_hh));
+			}
+			
 			shoutingHorsey.init(processing_list.size());
 			shoutingHorsey.show(0);
 			ui_progress.setMax(processing_list.size());
-			console = new String[processing_list.size()];
-			for(int _hh = 0; _hh < processing_list.size(); _hh++)
-				console[_hh] = processing_list.get(_hh).getName();
 		}
 		ui_close.setOnClickListener(new OnClickListener(){
 			@Override
@@ -237,19 +291,23 @@ public class ProcessorActivity extends Activity {
 			}
 		});
 
-		//final Intent processorIntent = new Intent(this, ProcessorService.class);
+		processorIntent = new Intent(this, ProcessorService.class);
 		processorIntent.putExtras(_instructions);
 		processor = new ProcessorAPI(behavior);
-		//processorIntent.putExtra(EXTRA_BEHAVIOR, behavior); Why the hell not to create single "Intent.putExtra(String key, Object data)"?
 		startService(processorIntent);
+	}
+	
+	@Override
+	public void onStop(){
+		super.onStop();
 	}
 	
 	public void stopOrFinish (final Button _butt){
 		if(stoped){
 			shoutingHorsey.hide();
 			stopService(processorIntent);
-			//I dont need backstack builder (Do I name it right?) 'cause there's only two activities
-			startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+			startActivity(new Intent(this, MainActivity.class)
+						  .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
 			finish();
 		} else {
 			processor.stop();
@@ -262,7 +320,7 @@ public class ProcessorActivity extends Activity {
 			stoped = true;
 		}
 	}
-	
+	/*
 	private String[] markoutConsoleEntry(int _processingEntry){
 		String[] _mirror = console.clone();
 		_mirror[_processingEntry] = "> " + _mirror[_processingEntry] + " - " + getString(R.string.ui_processing);
@@ -280,5 +338,13 @@ public class ProcessorActivity extends Activity {
 				ui_console.setText(_fuckyouall);
 			}
 		});
+	}
+	*/
+	private UiProcessingEntry addEntry (File _victim){
+		UiProcessingEntry _ = new UiProcessingEntry (this, _victim, 
+													 PreferenceManager.getDefaultSharedPreferences(this)
+													 .getBoolean("show_tagtitle", false), entrylistener);
+		ui_list.addView(_);
+		return _;
 	}
 }

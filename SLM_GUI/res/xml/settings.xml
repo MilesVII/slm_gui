@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/ui_settings">
     <CheckBoxPreference android:title="@string/ui_set_shownots" android:key="show_nots" android:defaultValue="true"/>
-    
+    <CheckBoxPreference android:key="finish_on_complete" android:defaultValue="false" android:summary="@string/ui_set_foc" android:title="@string/ui_set_foc_short"/>
+    <CheckBoxPreference android:summary="@string/ui_set_showtag" android:key="show_tagtitle" android:defaultValue="false" android:title="@string/ui_set_showtag_short"/>
+    <EditTextPreference android:key="queue_limit" android:title="@string/ui_set_queue_limit_short" android:inputType="number" android:summary="@string/ui_set_queue_limit" android:defaultValue="170"/>
+
 
 </PreferenceScreen>

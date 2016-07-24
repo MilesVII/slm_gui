@@ -1,25 +1,30 @@
 package com.milesseventh.slm_gui;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-public class ConfirmationDialogFragment extends DialogFragment {
-	private ArrayList<File> _x;
+public class Confirmator extends DialogFragment {
+	private ConfirmatorListener behavior;
+	private String txt;
+	public interface ConfirmatorListener{
+		public void action ();
+	}
 	
-	public void setList(ArrayList<File> __){
-		_x = __;
+	public void setAction (ConfirmatorListener _behavior){
+		behavior = _behavior;
+	}
+	
+	public void setText (String _txt){
+		txt = _txt;
 	}
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
-		_builder.setTitle(getString(R.string.ui_confirmation)).setMessage(getString(R.string.ui_er_alert)).setNegativeButton(getString(R.string.ui_cancel), new DialogInterface.OnClickListener() {
+		_builder.setTitle(getString(R.string.ui_confirmation)).setMessage(txt).setNegativeButton(getString(R.string.ui_cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				
@@ -27,7 +32,7 @@ public class ConfirmationDialogFragment extends DialogFragment {
 		}).setPositiveButton(getString(R.string.ui_continue), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				((MainActivity)getActivity()).startProcessorActivity(ProcessorAPI.Command.BURNDOWN, _x, null);
+				behavior.action();
 			}
 		});
 		return _builder.create();

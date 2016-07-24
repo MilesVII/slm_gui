@@ -13,7 +13,7 @@ public class NotificationPone extends ContextWrapper{
 		super(base);
 	}
 
-	private int whatIsYourNameHorsey, whyAreYouScreamingHorsey, howMuchWorkHaveYouToDoHorsey;
+	private int whatIsYourNameHorsey, howMuchWorkHaveYouToDoHorsey;
 	private NotificationManager NM = (NotificationManager) MainActivity.me.getSystemService(Context.NOTIFICATION_SERVICE);
 	private NotificationCompat.Builder smallHorsey;
 	private boolean hornyHorsey;
