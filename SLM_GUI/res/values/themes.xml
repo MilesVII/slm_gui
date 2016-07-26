@@ -2,19 +2,21 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="a_back">#eee</color>
     <color name="a_text">#000</color>
+    <color name="aurora">#25bfff</color>
     <color name="w_back">#222</color>
     <color name="w_text">#fff</color>
+    <color name="winston">#da4000</color>
     
     <style name="Aurora" parent="AppTheme">
         <item name="android:windowBackground">@color/a_back</item>
         <item name="android:popupBackground">@color/a_back</item>
-        <item name="android:colorBackground">@color/a_back</item>
+        <item name="android:itemBackground">@drawable/a_menu_color</item>
         <item name="android:textColor">@color/a_text</item>
     </style>
     <style name="Winston" parent="AppTheme">
         <item name="android:windowBackground">@color/w_back</item>
         <item name="android:popupBackground">@color/w_back</item>
-        <item name="android:colorBackground">@color/w_back</item>
+        <item name="android:itemBackground">@color/w_back</item>
         <item name="android:textColor">@color/w_text</item>
     </style>
 </resources>

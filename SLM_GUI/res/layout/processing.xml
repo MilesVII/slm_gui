@@ -16,7 +16,7 @@
             android:id="@+id/p_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start" />
+            android:layout_gravity="center_vertical|end" />
 
         <Button
             android:id="@+id/pr_b_close"

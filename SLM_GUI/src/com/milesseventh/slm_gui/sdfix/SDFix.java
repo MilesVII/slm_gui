@@ -54,6 +54,8 @@ public class SDFix {
 			}
 			else if (addLine) {
 				if (line.contains("</permission>")) {
+					sb.append("        <group gid=\"sdcard_rw\" />");
+					sb.append('\n');
 					sb.append("        <group gid=\"media_rw\" />");
 					sb.append('\n');
 					addLine = false;

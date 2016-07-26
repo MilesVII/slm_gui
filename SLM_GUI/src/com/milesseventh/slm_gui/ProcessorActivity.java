@@ -151,23 +151,6 @@ public class ProcessorActivity extends Activity {
 				}
 			});
 		}
-		
-		@Override
-		public void onComplete(final String _result, final Command _mode) {
-			runOnUiThread(new Runnable(){
-				@Override
-				public void run(){
-					if (_mode != Command.SHOWL)
-						shoutingHorsey.say(getString(R.string.ui_done));
-					if (simplifyUI)
-						ui_list.removeView(ui_console);
-					stopOrFinish(ui_close);
-				}
-			});
-			if(PreferenceManager.getDefaultSharedPreferences(me)
-			   .getBoolean("finish_on_complete", false))
-				stopOrFinish(ui_close);
-		}
 
 		@Override
 		public void onShowLComplete(final String _result, final boolean _found) {
@@ -226,6 +209,23 @@ public class ProcessorActivity extends Activity {
 				}
 			});
 			
+		}
+		
+		@Override
+		public void onComplete(final String _result, final Command _mode) {
+			runOnUiThread(new Runnable(){
+				@Override
+				public void run(){
+					if (shoutingHorsey != null)
+						shoutingHorsey.say(getString(R.string.ui_done));
+					if (simplifyUI && (_mode == Command.BURNDOWN || _mode == Command.GETL))
+						ui_list.removeView(ui_console);
+					stopOrFinish(ui_close);
+				}
+			});
+			if(PreferenceManager.getDefaultSharedPreferences(me)
+			   .getBoolean("finish_on_complete", false))
+				stopOrFinish(ui_close);
 		}
 	};
 	/////End of behavior defining/////

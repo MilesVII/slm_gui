@@ -45,12 +45,12 @@ public class ProcessorAPI implements Runnable {
 		public void onFileStarted(int _position);
 		public void onFileProcessed (int _position, Result _result);
 		public void onError (File _errorfile, Exception _ex);
-		public void onComplete (String _result, Command _mode);
 		public void onShowLComplete (String _result, boolean _found);
 		public void onGetLComplete (int _ok, int _nf, int _nt, int _er, int _ex);
 		//Ok, Not Found, No Tag, Error, Existing Lyrics
 		public void onBurndownLComplete ();
 		public void onSearchComplete (ArrayList<File> _result);
+		public void onComplete (String _result, Command _mode);
 	}
 	
 	ProcessorAPI(ProcessorListener _l){
