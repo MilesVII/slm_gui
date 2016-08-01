@@ -19,7 +19,7 @@ public class AboutDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
-		TextView _tv = new TextView(MainActivity.me);
+		TextView _tv = new TextView(getActivity());
 		_tv.setText(text);
 		Linkify.addLinks(_tv, Linkify.ALL);
 		_builder.setTitle(title).setView(_tv).setNeutralButton(R.string.ui_close, new DialogInterface.OnClickListener() {

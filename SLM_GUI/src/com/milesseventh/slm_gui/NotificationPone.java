@@ -14,19 +14,19 @@ public class NotificationPone extends ContextWrapper{
 	}
 
 	private int whatIsYourNameHorsey, howMuchWorkHaveYouToDoHorsey;
-	private NotificationManager NM = (NotificationManager) MainActivity.me.getSystemService(Context.NOTIFICATION_SERVICE);
+	private NotificationManager NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	private NotificationCompat.Builder smallHorsey;
 	private boolean hornyHorsey;
 	
 	public void init(int _max){
 		howMuchWorkHaveYouToDoHorsey = _max;
-		hornyHorsey = PreferenceManager.getDefaultSharedPreferences(MainActivity.me)
+		hornyHorsey = PreferenceManager.getDefaultSharedPreferences(this)
 									   .getBoolean("show_nots", true);
-		smallHorsey = new NotificationCompat.Builder(MainActivity.me)
+		smallHorsey = new NotificationCompat.Builder(this)
 				.setSmallIcon(R.drawable.ic_launcher)//(R.drawable.not_icon)
-				.setContentTitle(MainActivity.me.getString(R.string.app_name))
+				.setContentTitle(getString(R.string.app_name))
 				.setContentIntent(PendingIntent.getActivity(ProcessorActivity.me, 0, 
-															new Intent(MainActivity.me, ProcessorActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP),
+															new Intent(this, ProcessorActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP),
 															PendingIntent.FLAG_UPDATE_CURRENT));
 	}
 	

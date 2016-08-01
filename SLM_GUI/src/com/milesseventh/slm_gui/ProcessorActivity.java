@@ -258,7 +258,7 @@ public class ProcessorActivity extends Activity {
 		ui_progress = (ProgressBar) findViewById(R.id.p_progress);
 		
 		if (processing_list != null){
-			simplifyUI = ReceptionActivity.loadQueueLimitFromPreferences(this) < processing_list.size();
+			simplifyUI = sharedMethodsContainer.loadQueueLimitFromPreferences(this) < processing_list.size();
 			if (!simplifyUI){
 				ui_list.removeView(ui_console);
 				entries = new UiProcessingEntry[processing_list.size()];

@@ -201,7 +201,7 @@ public class ProcessorAPI implements Runnable {
 	//This code is really old
 	//Be quiet
 	
-	public String pullLyricsWrapper (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException{
+	private String pullLyricsWrapper (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException{
 		Mp3File _victim = new Mp3File(_unicorn);
 		ID3v2 _victimtag = _victim.getId3v2Tag();
 		if(!_victim.hasId3v2Tag()/* || _victimtag.getTitle() == null*/)//hasid3v2tag is modified
@@ -231,7 +231,7 @@ public class ProcessorAPI implements Runnable {
 			return("EXIMAGIK:" + _victimtag.getLyrics());//Lyrics already exist
 	}
 	//http://inversekarma.in/technology/net/fetching-lyrics-from-lyricwiki-in-c/
-	public String pullLyrics(String _artist, String _title, int depth, boolean _fg){
+	private String pullLyrics(String _artist, String _title, int depth, boolean _fg){
 		if (depth >= 7){
 			//writeline("Timeout. Please, try again later");
 			return ("NF");
@@ -284,7 +284,7 @@ public class ProcessorAPI implements Runnable {
 		return (_lyrics.substring(iStart, iEnd).trim().replace("&amp;", "&"));
 	}
 
-	public String pageDown(String _url){
+	private String pageDown(String _url){
 	    String line = "", all = "";
 	    URL myUrl = null;
 	    BufferedReader in = null;
@@ -308,7 +308,7 @@ public class ProcessorAPI implements Runnable {
 	    return (all);
 	}
 	//Method replaces first letter of all words to UPPERCASE and replaces all spaces with underscores.
-	private static String sanitize(String s, boolean _fg){
+	private String sanitize(String s, boolean _fg){
 		char[] array = s.trim().toCharArray();
 		if (!_fg){
 			if (array.length >= 1 && Character.isLowerCase(array[0]))

@@ -37,10 +37,4 @@ public class ReceptionActivity extends Activity {
 		//((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("SLM_data", cap));
 		return false;
 	}
-	
-	public static int loadQueueLimitFromPreferences(Context _ctxt){
-		String _t = PreferenceManager.getDefaultSharedPreferences(_ctxt).getString("queue_limit", "270");
-		_t = (_t == null || _t.isEmpty())?"0":_t;
-		return Integer.parseInt(_t);
-	}
 }

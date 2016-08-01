@@ -9,7 +9,9 @@ import java.util.Comparator;
 import com.milesseventh.slm_gui.sdfix.SDFix;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	@SuppressLint("InlinedApi")
 	private static String[] perm_stor = {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE,
 			Manifest.permission.READ_EXTERNAL_STORAGE
@@ -36,11 +39,11 @@ public class MainActivity extends Activity {
 	private LinearLayout list;
 	private File[] _unicorn;
 	private TextView sel_cap, cp_cap;
+	private final Activity _ctxt = this;
 	private boolean showtagtitle;
 	public String cur_path = "/storage";
 	public ArrayList<File> selection;
-	public static MainActivity me;
-	public final LayoutParams entrylp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+	public static final LayoutParams entrylp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 	private final OnClickListener entrylistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
@@ -82,10 +85,10 @@ public class MainActivity extends Activity {
 						_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
 					if (_t.equals(""))
 						_t = getString(R.string.ui_nfs);
-					showInfoDialog(me, getString(R.string.ui_selection), _t);
+					showInfoDialog(_ctxt, getString(R.string.ui_selection), _t);
 				}
 			};
-			if (ReceptionActivity.loadQueueLimitFromPreferences(me) < selection.size()){
+			if (sharedMethodsContainer.loadQueueLimitFromPreferences(_ctxt) < selection.size()){
 				showConfirmationDialog(getString(R.string.ui_showing_big_selection_warning), new Confirmator.ConfirmatorListener() {
 					@Override
 					public void action() {
@@ -159,10 +162,10 @@ public class MainActivity extends Activity {
 						@Override
 						public void action() {
 							try {
-								SDFix.fixPermissions(MainActivity.me);
-								showInfoDialog(me, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
+								SDFix.fixPermissions(_ctxt);
+								showInfoDialog(_ctxt, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
 							} catch (Exception e) {
-								showInfoDialog(me, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
+								showInfoDialog(_ctxt, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
 								e.printStackTrace();
 							}
 						}
@@ -174,7 +177,7 @@ public class MainActivity extends Activity {
 		}
 		
 		selection = new ArrayList<File>();
-		me = this;
+		//me = this;
 		
 		setContentView(R.layout.activity_main);
 		list = (LinearLayout) findViewById(R.id.central);
