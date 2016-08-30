@@ -1,22 +1,16 @@
 package com.milesseventh.slm_gui;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Vector;
 
 import com.milesseventh.slm_gui.sdfix.SDFix;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,39 +18,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-	@SuppressLint("InlinedApi")
-	private static String[] perm_stor = {
-			Manifest.permission.WRITE_EXTERNAL_STORAGE,
-			Manifest.permission.READ_EXTERNAL_STORAGE
-	};
-	private LinearLayout list;
-	private File[] _unicorn;
-	private TextView sel_cap, cp_cap;
 	private final Activity _ctxt = this;
-	private boolean showtagtitle;
-	public String cur_path = "/storage";
-	public ArrayList<File> selection;
-	public static final LayoutParams entrylp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-	private final OnClickListener entrylistener = new OnClickListener() {
-		@Override
-		public void onClick(View callofktulu) {
-			UiEntry _t = (UiEntry) callofktulu;
-			if (_t.getCaption().equals("../"))
-				cd_return();
-			else {
-				File _f = new File(cur_path + "/" + _t.getCaption().toString());
-				if (_f.isDirectory())
-					cd_command(_f.getPath());
-			}
-		}
-	};
+	private static Activity _act;
+	private FileChooser selector;
 	private final OnLongClickListener cmlistener = new OnLongClickListener() {
 		@Override
 		public boolean onLongClick(View callofktulu) {
@@ -66,14 +34,12 @@ public class MainActivity extends Activity {
 			return true;
 		}
 	};
-	private final OnClickListener clearlistener = new OnClickListener() {
+	/*private final OnClickListener clearlistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
-			selection.clear();
-			cd_command(cur_path);
-			refreshSelectionCaption();
+			selector.clear();;
 		}
-	};
+	};*/
 	private final OnClickListener showlistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
@@ -81,14 +47,14 @@ public class MainActivity extends Activity {
 				@Override
 				public void run() {
 					String _t = "";
-					for (File _horsey : selection)
+					for (File _horsey : selector.getSelected())
 						_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
 					if (_t.equals(""))
 						_t = getString(R.string.ui_nfs);
 					showInfoDialog(_ctxt, getString(R.string.ui_selection), _t);
 				}
 			};
-			if (sharedMethodsContainer.loadQueueLimitFromPreferences(_ctxt) < selection.size()){
+			if (SharedMethodsContainer.loadQueueLimitFromPreferences(_ctxt) < selector.getSelected().size()){
 				showConfirmationDialog(getString(R.string.ui_showing_big_selection_warning), new Confirmator.ConfirmatorListener() {
 					@Override
 					public void action() {
@@ -100,45 +66,15 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-	private final OnCheckedChangeListener checklistener = new OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(CompoundButton callofktulu, boolean _hoof) {
-			File _freehugs = ((CheckBoxWrapper)callofktulu).getHost();
-			if (_freehugs.isDirectory()){
-				if (_hoof){
-					addSubFiles(_freehugs, selection);
-				}else{
-					remSubFiles(_freehugs, selection);
-				}
-			}else{
-				if (selection.contains(_freehugs))
-					selection.remove(_freehugs);
-				else
-					selection.add(_freehugs);
-			}
-			
-			refreshSelectionCaption();
-		}
-	};
-	private Comparator<File> ls_comp = new Comparator<File>(){
-		public int compare(File f1, File f2){
-			if(f1.isDirectory() && !f2.isDirectory())
-				return -1;
-			else if (!f1.isDirectory() && f2.isDirectory())
-				return 1;
-			else
-				return f1.compareTo(f2);
-		}
-	};
+	
+	public void clearButton(View _no){
+		selector.clear();
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	if (findViewById(R.id.b_showsel) != null)
-	    		cd_return();
-	    	else
-	    		if (((Button)findViewById(R.id.pr_b_close)).isClickable())
-	    			((Button)findViewById(R.id.pr_b_close)).callOnClick();
+	    	selector.up();
 	        return true;
 	    }
 	    return super.onKeyDown(keyCode, event);
@@ -147,15 +83,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		_act = _ctxt;
 		
 		//Getting additional permissions to access filesystem
-		//Requesting sdcard access for API 23. Android developers are such assholes sometimes
-		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-			PackageManager.PERMISSION_GRANTED){
-			ActivityCompat.requestPermissions(this, perm_stor, 1);
-		}
-		//And for API 20+ too
-		if (android.os.Build.VERSION.SDK_INT > 18 && android.os.Build.VERSION.SDK_INT < 23){
+		//Requesting sdcard access for for KitKat...
+		if (android.os.Build.VERSION.SDK_INT == 19 || android.os.Build.VERSION.SDK_INT == 20){
 			try {
 				if (!SDFix.isRemovableStorageWritableFixApplied()){
 					showConfirmationDialog(getString(R.string.ui_sdfix_caution), new Confirmator.ConfirmatorListener() {
@@ -174,41 +106,50 @@ public class MainActivity extends Activity {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+		} else if (android.os.Build.VERSION.SDK_INT > 20){
+			//...and for Android 5.0+
+			if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)){
+				showInfoDialog(this, getString(R.string.ui_sdaccesswarning_title), getString(R.string.ui_sdaccesswarning));
+				Editor _tiemetight = PreferenceManager.getDefaultSharedPreferences(this).edit();
+				_tiemetight.putBoolean("isFirstRun", false);
+				_tiemetight.commit();
+			}
 		}
 		
-		selection = new ArrayList<File>();
-		//me = this;
-		
 		setContentView(R.layout.activity_main);
-		list = (LinearLayout) findViewById(R.id.central);
-		cp_cap = (TextView) findViewById(R.id.curpathcaption);
-		sel_cap = (TextView) findViewById(R.id.selcaption);
-		((Button) findViewById(R.id.b_clearsel)).setOnClickListener(clearlistener);
+		selector = new FileChooser(this, cmlistener, 
+			new Runnable(){
+				@Override
+				public void run(){
+					((TextView) findViewById(R.id.selcaption)).setText(getString(R.string.ui_fs) + ": " + selector.getSelected().size());
+				}
+			},  
+			new onOpenListener(){
+				@Override
+				public void onOpen(File _newPath){
+					((TextView) findViewById(R.id.curpathcaption)).setText(_newPath.getPath());
+				}
+			}, 
+			PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_victimagtitle", false));
+		((ScrollView) findViewById(R.id.central)).addView(selector);
 		((Button) findViewById(R.id.b_showsel)).setOnClickListener(showlistener);
-		
-		cd_command(cur_path);
-		refreshSelectionCaption();
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		if (android.os.Build.VERSION.SDK_INT <= 20)
+			menu.removeItem(R.id.action_sdcard);
 		return true;
 	}
 
+	@SuppressLint("InlinedApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getGroupId() == R.id.group){
-			if (sel_cap == null){
-				return true;
-			}
-		}
-		if ((item.getItemId() == R.id.act_bd || item.getItemId() == R.id.act_gl || 
-				item.getItemId() == R.id.act_search) && selection.isEmpty()){
+		if (item.getGroupId() == R.id.command_group && selector.getSelected().isEmpty()){
 				showInfoDialog(this, getString(R.string.ui_e), getString(R.string.ui_nfs));
 				return true;
 		}
-		
 		switch (item.getItemId()){
 		case (R.id.action_about):
 			showAboutDialog(this, getString(R.string.menu_about), getString(R.string.about_content));
@@ -220,12 +161,12 @@ public class MainActivity extends Activity {
 			showConfirmationDialog(getString(R.string.ui_er_alert), new Confirmator.ConfirmatorListener(){
 				@Override
 				public void action() {
-					startProcessorActivity(ProcessorAPI.Command.BURNDOWN, selection, null);
+					startProcessorActivity(ProcessorAPI.Command.BURNDOWN, selector.getSelected(), null);
 				}
 			});
 			return true;
 		case (R.id.act_gl):
-			startProcessorActivity(ProcessorAPI.Command.GETL, selection, null);
+			startProcessorActivity(ProcessorAPI.Command.GETL, selector.getSelected(), null);
 			return true;
 		case (R.id.act_search):
 			searchDialog();
@@ -236,92 +177,20 @@ public class MainActivity extends Activity {
 		case (R.id.action_exit):
 			finish();
 			return true;
+		case (R.id.action_sdcard):
+		    startActivity(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public void startProcessorActivity(ProcessorAPI.Command _com, ArrayList<File> _sel, String[] _meta){
+	public void startProcessorActivity(ProcessorAPI.Command _com, Vector<File> _sel, String[] _meta){
 		Intent _bukake = new Intent(this, ProcessorActivity.class);
 		_bukake.setAction(Intent.ACTION_VIEW);
 		_bukake.putExtra(ProcessorActivity.EXTRA_COMMAND, _com);
 		_bukake.putExtra(ProcessorActivity.EXTRA_META, _meta);
 		_bukake.putExtra(ProcessorActivity.EXTRA_FILES, _sel);
 		startActivity(_bukake);
-	}
-	
-	public void cd_command (String _victim){
-		File _t = new File(_victim);
-		showtagtitle = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_tagtitle", false);
-		if (_t.exists() && _t.isDirectory() && !_t.getPath().equalsIgnoreCase("/")){
-			list.removeAllViews();
-			if (!cur_path.equals("/"))
-				addEntry (new File(".."));
-			cur_path = _t.getPath();
-			_unicorn = _t.listFiles(new FileFilter(){
-				@Override
-				public boolean accept(File pathname){
-					if(pathname.getName().startsWith("."))
-						return false;
-					if(pathname.isDirectory())
-						return true;
-					else 
-						return pathname.getName().endsWith(".mp3");
-				}
-			});
-			Arrays.sort(_unicorn, ls_comp);
-			for (File _horn : _unicorn)
-				addEntry (_horn);
-			cp_cap.setText(cur_path);
-		}
-	}
-	
-	private void cd_return (){
-		cd_command(cur_path.substring(0, cur_path.lastIndexOf("/")));
-	}
-	
-	private void addEntry (File _victim){
-		list.addView(new UiFileEntry (this, _victim, showtagtitle, checksync(_victim), 
-									  checklistener, entrylistener, cmlistener));
-	}
-	
-	public boolean checksync (File _file){
-		if (_file.isDirectory()){
-			return checksync_dir (_file);
-		}else{
-			return selection.contains(_file);
-		}
-	}
-	
-	public boolean checksync_dir (File _lick){
-		String _tastyteeth = _lick.getPath();
-		for (File _saliva : selection)
-			if (_saliva.getPath().startsWith(_tastyteeth))
-				return true;
-		return false;
-	}
-
-	private void addSubFiles (File _dir, ArrayList<File> _receiver){
-		for (File _saliva : _dir.listFiles())
-			if(_saliva.isDirectory()){
-				if (!_saliva.getName().startsWith("."))
-					addSubFiles(_saliva, _receiver);
-			}else if (_saliva.getName().endsWith(".mp3") && 
-					!_saliva.getName().startsWith(".") && 
-					!_receiver.contains(_saliva))
-				_receiver.add(_saliva);
-	}
-
-	private void remSubFiles (File _dir, ArrayList<File> _receiver){
-		ArrayList<File> _holder = new ArrayList<File>(selection);
-		String _tastyteeth = _dir.getPath();
-		for (File _saliva : selection)
-			if (_saliva.getPath().startsWith(_tastyteeth))
-				_holder.remove(_saliva);
-		selection = _holder;
-	}
-	
-	private void refreshSelectionCaption(){
-		sel_cap.setText(getString(R.string.ui_fs) + ": " + Integer.toString(selection.size()));
 	}
 
 	private void showConfirmationDialog(String _txt, Confirmator.ConfirmatorListener _action){
@@ -350,7 +219,11 @@ public class MainActivity extends Activity {
 	
 	private void searchDialog(){
 		SearchDialogFragment _t = new SearchDialogFragment();
-		_t.setList(selection);
+		_t.setList(selector.getSelected());
 		_t.show(this.getFragmentManager(), "...");
+	}
+	
+	public static Activity getInstance(){
+		return (_act);
 	}
 }

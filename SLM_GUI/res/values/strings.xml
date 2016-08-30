@@ -80,15 +80,18 @@ milesseventh@gmail.com</string>
     <string name="ui_set_queue_limit_short">Queue size limit</string>
     <string name="ui_set_queue_limit">Amount of files that can be processed with normal UI (Large queues can seriously affect speed)</string>
     
-    <string name="ui_sdfix_caution">Seems like your version of your system is 
-Android 4.4 or higher. The problem is that application cannot write to your sdcard without 
+    <string name="ui_sdfix_caution">Seems like the version of your system is 
+Android 4.4. The problem is that application cannot write to your sdcard without 
 modification of some system files. This operation is harmless and doesn\'t affect system\'s 
 stability. Without it, application will not be allowed to write data into files, but other 
 functions will still be working. Continue and modify system files\?</string>
     <string name="ui_sdfix_done">Done! Reboot your device to apply changes.</string>
-    <string name="ui_sdfix_e">Changes weren\'t applied. We tried.</string>
+    <string name="ui_sdfix_e">Changes weren\'t applied. At least, we tried.</string>
     
     <string name="ui_stat_wait">File is in queue</string>
     <string name="ui_stat_processing">File is processing</string>
     <string name="ui_stat_processed">File is processed</string>
+    
+    <string name="ui_sdaccesswarning_title">SDCard access</string>
+    <string name="ui_sdaccesswarning">Please, check out files that application can access using main menu</string>
 </resources>

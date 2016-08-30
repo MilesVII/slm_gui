@@ -80,7 +80,7 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onFileStarted(final int _position) {
+		public void onFileStarted(final int _position) {			
 			if (!simplifyUI)
 				entries[_position].setStatus(me, getString(R.string.ui_stat_processing), 
 											 R.drawable.pointer);
@@ -258,7 +258,7 @@ public class ProcessorActivity extends Activity {
 		ui_progress = (ProgressBar) findViewById(R.id.p_progress);
 		
 		if (processing_list != null){
-			simplifyUI = sharedMethodsContainer.loadQueueLimitFromPreferences(this) < processing_list.size();
+			simplifyUI = SharedMethodsContainer.loadQueueLimitFromPreferences(this) < processing_list.size();
 			if (!simplifyUI){
 				ui_list.removeView(ui_console);
 				entries = new UiProcessingEntry[processing_list.size()];

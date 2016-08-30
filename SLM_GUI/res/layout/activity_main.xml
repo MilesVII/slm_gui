@@ -43,6 +43,7 @@
             android:gravity="center_vertical|center_horizontal"
             android:minHeight="36dp"
             android:minWidth="48dp"
+            android:onClick="clearButton"
             android:paddingLeft="3dp"
             android:paddingRight="3dp"
             android:text="@string/ui_deselect" />
@@ -57,20 +58,15 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <ScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/central"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/curpathcaption" >
-
-        <LinearLayout
-            android:id="@+id/central"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
-        </LinearLayout>
     </ScrollView>
 
 </RelativeLayout>

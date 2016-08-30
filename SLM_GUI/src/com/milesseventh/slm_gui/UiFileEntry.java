@@ -16,7 +16,6 @@ public class UiFileEntry extends UiEntry {
 		CheckBoxWrapper _tb = new CheckBoxWrapper(_ctxt, _victim);
 		_tb.setEnabled(!_victim.getName().equals(".."));
 		_tb.setChecked(_ison);
-		//_tb.setGravity(Gravity.CENTER_VERTICAL + Gravity.CENTER_HORIZONTAL);
 		_tb.setOnCheckedChangeListener(_occl);
 		
 		//Entry caption

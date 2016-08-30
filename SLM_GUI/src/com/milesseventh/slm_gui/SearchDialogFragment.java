@@ -1,10 +1,9 @@
 package com.milesseventh.slm_gui;
 
-import android.app.AlertDialog.Builder;
-
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Vector;
 
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -13,9 +12,9 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 
 public class SearchDialogFragment extends DialogFragment {
-	private ArrayList<File> _x;
+	private Vector<File> _x;
 	
-	public void setList(ArrayList<File> __){
+	public void setList(Vector<File> __){
 		_x = __;
 	}
 	
@@ -31,7 +30,6 @@ public class SearchDialogFragment extends DialogFragment {
 			public void onClick(DialogInterface arg0, int arg1) {
 				String _q = ((TextView)getDialog().findViewById(R.id.sq_field)).getText().toString().trim();
 				if (!_q.equals("")){
-					//Processor jack = new Processor(_x, _q, true /*or false. Nevermind*/);
 					String[] _meta = {_q};
 					((MainActivity)getActivity()).startProcessorActivity(ProcessorAPI.Command.SEARCH, _x, _meta);
 				}

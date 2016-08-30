@@ -25,18 +25,11 @@ import android.widget.Toast;
 
 public class CustomContextMenuDialogFragment extends DialogFragment {
 	private String host;
-	private final Activity _ctxt = getActivity();
+	private final Activity _ctxt = MainActivity.getInstance();
 	
 	public void setTitle (String _file){
 		host = _file;
 	}
-	//FUCK THAT SHIT
-	//AAAAAAAAAAAA!
-	//NO WAY IN HELL I GONNA TRY TO FIX THIS
-	//DAMNATION IS ITS NAME
-	//AND IT SHALL FALL
-	//SO SAY YOUR LAST PRAYER
-	//AND GET READY TO TURN INTO ASHES
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(_ctxt);
@@ -46,7 +39,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 
 		Button ccm_sl = new Button(_ctxt);
 		ccm_sl.setBackgroundResource(R.drawable.button_custom);
-		ccm_sl.setLayoutParams(MainActivity.entrylp);
+		ccm_sl.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		ccm_sl.setText(getString(R.string.menu_sl));
 		ccm_sl.setOnClickListener(new OnClickListener(){
 			@Override
@@ -73,7 +66,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 		
 		Button ccm_set = new Button(_ctxt);
 		ccm_set.setBackgroundResource(R.drawable.button_custom);
-		ccm_set.setLayoutParams(MainActivity.entrylp);
+		ccm_set.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		ccm_set.setText(getString(R.string.ui_set));
 		ccm_set.setOnClickListener(new OnClickListener(){
 			@Override
