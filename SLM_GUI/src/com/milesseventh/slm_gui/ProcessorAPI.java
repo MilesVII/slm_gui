@@ -29,6 +29,7 @@ public class ProcessorAPI implements Runnable {
 	public enum Result {
 		OK, NOTFOUND, ERR, NOTAG, EXISTING, INDETERMINATE
 	}
+	public static final String REWRITE_FILE_SUFFIX = ".x";
 	
 	private Thread _t;
 	private boolean active;
@@ -323,5 +324,16 @@ public class ProcessorAPI implements Runnable {
 	public static void overkill(File _victim, File _master){
 		_victim.delete();
 		_master.renameTo(_victim);
+	}
+
+	public static String getLyricsFromTag (File _in) throws Exception{
+		return (new Mp3File (_in).getId3v2Tag().getLyrics());
+	}
+	
+	public static void setLyrics (File _victim, String _soul) throws Exception{
+		Mp3File zero = new Mp3File (_victim);
+		zero.getId3v2Tag().setLyrics(_soul);
+		zero.save(_victim.getPath() + REWRITE_FILE_SUFFIX);
+		overkill(_victim, new File(_victim.getPath() + REWRITE_FILE_SUFFIX));
 	}
 }

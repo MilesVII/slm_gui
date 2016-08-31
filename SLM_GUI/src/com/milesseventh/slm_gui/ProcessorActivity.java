@@ -45,7 +45,7 @@ public class ProcessorActivity extends Activity {
 		@Override
 		public void onClick(View callofktulu) {
 			UiProcessingEntry _t = (UiProcessingEntry) callofktulu;
-			MainActivity.showInfoDialog(me, _t.getTitle(), _t.getStatus());
+			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus());
 		}
 	};
 	public ProcessorAPI.ProcessorListener behavior = new ProcessorAPI.ProcessorListener(){

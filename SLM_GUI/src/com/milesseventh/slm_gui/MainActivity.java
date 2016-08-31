@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
 		@Override
 		public boolean onLongClick(View callofktulu) {
 			CustomContextMenuDialogFragment _t = new CustomContextMenuDialogFragment();
-			_t.setTitle(((UiEntry)callofktulu).getFile().getPath());
+			_t.setFile(((UiEntry)callofktulu).getFile());
 			_t.show(getFragmentManager(), "...");
 			return true;
 		}
@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
 						_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
 					if (_t.equals(""))
 						_t = getString(R.string.ui_nfs);
-					showInfoDialog(_ctxt, getString(R.string.ui_selection), _t);
+					SharedMethodsContainer.showInfoDialog(_ctxt, getString(R.string.ui_selection), _t);
 				}
 			};
 			if (SharedMethodsContainer.loadQueueLimitFromPreferences(_ctxt) < selector.getSelected().size()){
@@ -95,9 +95,9 @@ public class MainActivity extends Activity {
 						public void action() {
 							try {
 								SDFix.fixPermissions(_ctxt);
-								showInfoDialog(_ctxt, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
+								SharedMethodsContainer.showInfoDialog(_ctxt, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
 							} catch (Exception e) {
-								showInfoDialog(_ctxt, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
+								SharedMethodsContainer.showInfoDialog(_ctxt, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
 								e.printStackTrace();
 							}
 						}
@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
 		} else if (android.os.Build.VERSION.SDK_INT > 20){
 			//...and for Android 5.0+
 			if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)){
-				showInfoDialog(this, getString(R.string.ui_sdaccesswarning_title), getString(R.string.ui_sdaccesswarning));
+				SharedMethodsContainer.showInfoDialog(this, getString(R.string.ui_sdaccesswarning_title), getString(R.string.ui_sdaccesswarning));
 				Editor _tiemetight = PreferenceManager.getDefaultSharedPreferences(this).edit();
 				_tiemetight.putBoolean("isFirstRun", false);
 				_tiemetight.commit();
@@ -147,8 +147,8 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getGroupId() == R.id.command_group && selector.getSelected().isEmpty()){
-				showInfoDialog(this, getString(R.string.ui_e), getString(R.string.ui_nfs));
-				return true;
+			SharedMethodsContainer.showInfoDialog(this, getString(R.string.ui_e), getString(R.string.ui_nfs));
+			return true;
 		}
 		switch (item.getItemId()){
 		case (R.id.action_about):
@@ -198,12 +198,6 @@ public class MainActivity extends Activity {
 		_t.setAction(_action);
 		_t.setText(_txt);
 		_t.show(this.getFragmentManager(), "...");
-	}
-	
-	public static void showInfoDialog(Activity _ctxt, String _title, String _text){
-		InfoDialogFragment _t = new InfoDialogFragment();
-		_t.setData(_title, _text);
-		_t.show(_ctxt.getFragmentManager(), "...");
 	}
 	
 	private void showAboutDialog(Activity _ctxt, String _title, String _text){
