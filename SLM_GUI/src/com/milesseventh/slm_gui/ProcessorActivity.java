@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProcessorActivity extends Activity {
-	public static ProcessorActivity me;//I have to use it only to send "behavior" to ProcessorService.
+	public static ProcessorActivity me;
 	public ProcessorAPI processor;
 	public static final String EXTRA_FILES = "com.milesseventh.slm_gui.ef", 
 							   EXTRA_COMMAND = "com.milesseventh.slm_gui.com",
@@ -45,7 +45,7 @@ public class ProcessorActivity extends Activity {
 		@Override
 		public void onClick(View callofktulu) {
 			UiProcessingEntry _t = (UiProcessingEntry) callofktulu;
-			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus());
+			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus(me));
 		}
 	};
 	public ProcessorAPI.ProcessorListener behavior = new ProcessorAPI.ProcessorListener(){
@@ -100,14 +100,20 @@ public class ProcessorActivity extends Activity {
 		@Override
 		public void onFileProcessed(final int _position, Result _result) {
 			final String _temp;
+			String _snippet = null;
 			final int _ico;
+			File _victim = entries[_position].getFile();
+			boolean _showsnippet = false;
+			
 			switch(_result){
 			case OK:
 				_temp = getString(R.string.ui_ok);
+				_showsnippet = true;
 				_ico = R.drawable.ok;
 				break;
 			case EXISTING:
 				_temp = getString(R.string.ui_exist);
+				_showsnippet = true;
 				_ico = R.drawable.ok;
 				break;
 			case NOTAG:
@@ -126,14 +132,27 @@ public class ProcessorActivity extends Activity {
 				_temp = "?!";
 				_ico = R.drawable.error;
 			}
+
+			try {
+				if (_showsnippet)
+					_snippet = ProcessorAPI.getLyricsFromTag(_victim);
+			} catch (Exception ex) {
+				SharedMethodsContainer.showError(me, ex);
+				ex.printStackTrace();
+			}
+			final String _snip = _snippet;//Argh
+			
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
 					ui_progress.setProgress(_position + 1);
 					shoutingHorsey.show(_position + 1);
-					if (!simplifyUI)
+					if (!simplifyUI){
 						entries[_position].setStatus(me, getString(R.string.ui_stat_processed) + 
-														": " + _temp, _ico);
+								": " + _temp, _ico);
+						if (_snip != null)
+							entries[_position].setSnippet(_snip);
+					}
 				}
 			});
 			//console[_position] += " - " + _temp;

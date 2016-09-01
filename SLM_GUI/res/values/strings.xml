@@ -56,6 +56,7 @@
     <string name="ui_gd_forcecase">Force characters\' case</string>
     <string name="ui_stop">Stop</string>
     <string name="ui_ph_squery">Search query</string>
+    <string name="ui_snippet_prefix">Lyrics</string>
     <string name="about_content">Seventh Lyrics Manager is free opensource application that allows you to automagically download and write song lyrics into ID3v2 tag that included by the most of MP3 files. There is a lot of music players which are able to show song\'s lyric while playing it. \n
 Developed by Miles Seventh, 2016\n
 \n

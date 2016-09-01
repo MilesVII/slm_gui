@@ -56,6 +56,7 @@
     <string name="ui_gd_forcecase">Не изменять регистр символов</string>
     <string name="ui_stop">Стоп</string>
     <string name="ui_ph_squery">Поисковый запрос</string>
+    <string name="ui_snippet_prefix">Текст песни</string>
 	<string name="about_content">Seventh Lyrics Manager - бесплатное приложение с открытым исходным кодом, позволяющее автоматически скачивать и записывать тексты песен в их ID3v2-тег, имеющийся в большинстве mp3-файлов. Далее загруженные тексты могут быть просмотрены во многих плеерах при воспроизведении песни. \n
 Developed by Miles Seventh, 2016\n
 \n
