@@ -12,6 +12,7 @@ public class UiProcessingEntry extends UiEntry {
 	private String status, snippet;
 	private ImageView icon;
 	private static final LayoutParams icolp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+	private boolean frozen = false;
 	
 	public UiProcessingEntry(Context _ctxt, File _victim, boolean _showtagtitle, OnClickListener _ocl) {
 		super(_ctxt, _victim, _showtagtitle);
@@ -35,15 +36,25 @@ public class UiProcessingEntry extends UiEntry {
 		addView(icon);
 		addView(_tx);
 	}
+
+	public void freezeStatus(){
+		frozen = true;
+	}
 	
 	public void setStatus(Activity _ctxt, final String _txt, final int _icoid){
+		if (frozen)
+			return;
 		_ctxt.runOnUiThread(new Runnable(){
 			@Override
 			public void run(){
 				icon.setImageResource(_icoid);
-				status = _txt;
 			}
 		});
+		setStatus(_txt);
+	}
+	
+	public void setStatus(final String _txt){
+		status = _txt;
 	}
 	
 	public void setSnippet(String _txt){
@@ -54,9 +65,9 @@ public class UiProcessingEntry extends UiEntry {
 			snippet = _txt;
 	}
 	
-	public String getStatus(Context _ctxt){
+	public String getStatus(){
 		return (heart.getPath() + "\n\n" + status + 
-				(snippet == null || snippet.isEmpty()?"":("\n\n" + _ctxt.getString(R.string.ui_snippet_prefix) + ":\n" + snippet)));
+				(snippet == null || snippet.isEmpty()?"":("\n\n" + this.getContext().getString(R.string.ui_snippet_prefix) + ":\n" + snippet)));
 	}
 	
 	public String getTitle(){

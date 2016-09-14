@@ -11,6 +11,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
@@ -31,8 +32,6 @@ public class ProcessorActivity extends Activity {
 							   EXTRA_META = "com.milesseventh.slm_gui.meta",
 							   EXTRA_BEHAVIOR = "com.milesseventh.slm_gui.bh";
 	private Intent processorIntent;
-	//private ProcessorAPI.Command mode;
-	//private String[] console;
 	private ArrayList<File> processing_list;
 	private UiProcessingEntry[] entries;
 	private TextView ui_status, ui_console;
@@ -45,7 +44,7 @@ public class ProcessorActivity extends Activity {
 		@Override
 		public void onClick(View callofktulu) {
 			UiProcessingEntry _t = (UiProcessingEntry) callofktulu;
-			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus(me));
+			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus());
 		}
 	};
 	public ProcessorAPI.ProcessorListener behavior = new ProcessorAPI.ProcessorListener(){
@@ -80,7 +79,16 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onFileStarted(final int _position) {			
+		public void onFileStarted(final int _position) {
+			File _victim = processing_list.get(_position);/*
+			try {
+				getContentResolver().openOutputStream(Uri.fromFile(_victim));
+			} catch (Exception ex) {
+				SharedMethodsContainer.showError(me, ex);
+				ex.printStackTrace();
+			}*/
+			/////////////////////////////////////
+			
 			if (!simplifyUI)
 				entries[_position].setStatus(me, getString(R.string.ui_stat_processing), 
 											 R.drawable.pointer);
@@ -88,7 +96,7 @@ public class ProcessorActivity extends Activity {
 				runOnUiThread(new Runnable(){
 					@Override
 					public void run(){
-						ui_console.setText(processing_list.get(_position) + ": " + 
+						ui_console.setText(processing_list.get(_position).getName() + ": " + 
 										   getString(R.string.ui_stat_processing) +
 										   " (" + (_position + 1) + '/' + 
 										   processing_list.size() + ')');
@@ -160,15 +168,13 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onError(final File _errorfile, final Exception _ex) {
+		public void onError(final int _errorentry, final Exception _ex) {
 			_ex.printStackTrace();
-			runOnUiThread(new Runnable(){
-				@Override
-				public void run(){
-					if (simplifyUI)
-						addEntry(_errorfile).setStatus(me, _ex.getMessage(), R.drawable.error);
-				}
-			});
+			if (!simplifyUI){
+				entries[_errorentry].setStatus(me, getString(R.string.ui_stat_processed) + 
+						": " + _ex.getMessage(), R.drawable.error);
+				entries[_errorentry].freezeStatus();
+			}
 		}
 
 		@Override

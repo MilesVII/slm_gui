@@ -30,6 +30,8 @@ public class ProcessorAPI implements Runnable {
 		OK, NOTFOUND, ERR, NOTAG, EXISTING, INDETERMINATE
 	}
 	public static final String REWRITE_FILE_SUFFIX = ".x";
+	private static final int MAX_ATTEMPTS_AMOUNT = 7, MAX_REDIRECTIONS = 3;
+	
 	
 	private Thread _t;
 	private boolean active;
@@ -45,7 +47,7 @@ public class ProcessorAPI implements Runnable {
 		public void onStart (Command _mode);
 		public void onFileStarted(int _position);
 		public void onFileProcessed (int _position, Result _result);
-		public void onError (File _errorfile, Exception _ex);
+		public void onError (int _position, Exception _ex);
 		public void onShowLComplete (String _result, boolean _found);
 		public void onGetLComplete (int _ok, int _nf, int _nt, int _er, int _ex);
 		//Ok, Not Found, No Tag, Error, Existing Lyrics
@@ -106,10 +108,9 @@ public class ProcessorAPI implements Runnable {
 					if (active){
 						listener.onFileStarted(_i);
 						//listener.onFileProcessed(_i, process(_unicorn));
-						Result ___ = process(_unicorn);
+						Result ___ = process(_unicorn, _i);
 						if (active)
 							listener.onFileProcessed(_i, ___);
-						else return;
 						_i++;
 					}else{
 						return;
@@ -139,7 +140,7 @@ public class ProcessorAPI implements Runnable {
 			active = false;
 	}
 	
-	private Result process(File _unicorn){
+	private Result process(File _unicorn, int _position){
 		try{
 			Mp3File _victim;
 			String _lyr;
@@ -174,6 +175,7 @@ public class ProcessorAPI implements Runnable {
 					}
 				} catch (Exception ex){
 					glr_er++;
+					listener.onError(_position, ex);
 					return Result.ERR;
 				}
 			case SEARCH:
@@ -193,7 +195,7 @@ public class ProcessorAPI implements Runnable {
 				return Result.ERR;
 			}
 		} catch(Exception ex){
-			listener.onError(_unicorn, ex);
+			listener.onError(_position, ex);
 			return Result.ERR;
 		}
 	}
@@ -233,9 +235,9 @@ public class ProcessorAPI implements Runnable {
 	}
 	//http://inversekarma.in/technology/net/fetching-lyrics-from-lyricwiki-in-c/
 	private String pullLyrics(String _artist, String _title, int depth, boolean _fg){
-		if (depth >= 7){
+		if (depth >= MAX_ATTEMPTS_AMOUNT){
 			//writeline("Timeout. Please, try again later");
-			return ("NF");
+			return ("NF");//Should try throw(Reached attempts limit)
 		}
 		
 		String _lyrics, _cleanurl;
@@ -259,16 +261,13 @@ public class ProcessorAPI implements Runnable {
 			
 		//If Lyrics Wikia is suggesting a redirect, pull lyrics for that.
 		if (_lyrics.contains("#REDIRECT")){
-			if(redir_amount++ >= 3){//To be honest: I dont understand this kind of magic. Tho it doesnt matter
-				//writeline("Error: Reached redirecton limit.");
-				return ("NF");
-			}
+			if(redir_amount++ >= MAX_REDIRECTIONS)
+				return ("NF");//Should try throw(Reached redirects limit)
 			
 			iStart = _lyrics.indexOf("#REDIRECT [[") + 12;
 			iEnd = _lyrics.indexOf("]]",iStart);
 			_artist = _lyrics.substring(iStart, iEnd).split(":")[0];//slice() was here
 			_title = _lyrics.substring(iStart, iEnd).split(":")[1].replace("&amp;", "&");//slice() was here
-			//writeline("Query redirected to " + _artist + " - " + _title);
 			return (pullLyrics(_artist, _title, 0, _fg));
 		} else if (_lyrics.contains("!-- PUT LYRICS HERE (and delete this entire line) -->"))//Lyrics not found
 			return ("NF");
@@ -277,7 +276,6 @@ public class ProcessorAPI implements Runnable {
 		iStart = _lyrics.indexOf("&lt;lyrics>") + 11;
 		iEnd = _lyrics.indexOf("&lt;/lyrics>") - 1;
 
-		//Strange megarare shit happened.
 		if(iStart == 10 || iEnd == -2){
 			return ("NF");
 		}

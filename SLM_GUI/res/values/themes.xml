@@ -16,12 +16,12 @@
         <item name="android:itemBackground">@drawable/a_menu_color</item>
         <item name="android:textColor">@color/a_text</item>
     </style>
-    <!--<style name="Winston" parent="android:Theme.Holo.Light">
+    <style name="Winston" parent="android:Theme.Black">
         <item name="android:windowBackground">@color/w_back</item>
         <item name="android:popupBackground">@color/w_back</item>
         <item name="android:itemBackground">@drawable/w_menu_color</item>
         <item name="android:textColor">@color/w_text</item>
-    </style>-->
+    </style>
     <style name="Nona" parent="android:Theme.Holo.Light">
         <item name="android:windowBackground">@color/n_back</item>
         <item name="android:popupBackground">@color/n_back</item>

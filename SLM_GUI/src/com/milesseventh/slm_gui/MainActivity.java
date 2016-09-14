@@ -1,6 +1,7 @@
 package com.milesseventh.slm_gui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Vector;
 
 import com.milesseventh.slm_gui.sdfix.SDFix;
@@ -9,8 +10,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +28,7 @@ public class MainActivity extends Activity {
 	private final Activity _ctxt = this;
 	private static Activity _act;
 	private FileChooser selector;
+	private int REQUEST_SDCARD = 42;
 	private final OnLongClickListener cmlistener = new OnLongClickListener() {
 		@Override
 		public boolean onLongClick(View callofktulu) {
@@ -135,6 +139,8 @@ public class MainActivity extends Activity {
 		((Button) findViewById(R.id.b_showsel)).setOnClickListener(showlistener);
 	}
 	
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -178,12 +184,21 @@ public class MainActivity extends Activity {
 			finish();
 			return true;
 		case (R.id.action_sdcard):
-		    startActivity(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE));
+		    startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), REQUEST_SDCARD);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
+	@SuppressLint("InlinedApi")
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if (requestCode != REQUEST_SDCARD || resultCode != RESULT_OK)
+			return;
+		Uri treeUri = data.getData();
+		ReceptionActivity.accessibleTree = DocumentFile.fromTreeUri(this, treeUri);
+	}
+
 	public void startProcessorActivity(ProcessorAPI.Command _com, Vector<File> _sel, String[] _meta){
 		Intent _bukake = new Intent(this, ProcessorActivity.class);
 		_bukake.setAction(Intent.ACTION_VIEW);
