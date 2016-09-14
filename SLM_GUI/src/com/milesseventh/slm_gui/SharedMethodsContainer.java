@@ -5,6 +5,11 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 public class SharedMethodsContainer extends android.app.Application {
+	/*
+	 * SMC is a class that contains some commonly-used methods
+	 */
+	//public static DocumentFile accessibleTree = null;
+	
 	public static int loadQueueLimitFromPreferences(Context _ctxt){
 		String _t = PreferenceManager.getDefaultSharedPreferences(_ctxt).getString("queue_limit", "270");
 		_t = (_t == null || _t.isEmpty())?"0":_t;

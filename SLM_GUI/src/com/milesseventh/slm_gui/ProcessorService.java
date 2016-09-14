@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 public class ProcessorService extends IntentService {
-	//private ArrayList<File> pl;
 	private ProcessorAPI.Command mode;
 	
 	public ProcessorService() {

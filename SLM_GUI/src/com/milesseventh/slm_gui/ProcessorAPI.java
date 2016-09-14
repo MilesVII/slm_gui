@@ -18,10 +18,17 @@ import com.mpatric.mp3agic.UnsupportedTagException;
 
 public class ProcessorAPI implements Runnable {
 	/*
-	 * This class isn't connected to any other. You can use it in your own application with customized mp3agic lib,
+	 * This class isn't connected to Android API. You can use it in your own application with customized mp3agic lib,
 	 * just instantiate it with constructor, defining listener, then set params by one of
 	 * these methods: setBatchParams(), setShowLyrsParams() or setSearchParams(), 
-	 * and invoke start() method.
+	 * and invoke start() method. 
+	 * The example of use can be found in ProcessorService.java
+	 */
+	/*
+	 * Command BURNDOWN erases all the lyrics contained by every file of the received list
+	 * Command SHOWL shows lyrics that may be found by received artist and song name
+	 * Command GETL downloads and embeds lyrics of each file in the list that may be found by artist and song name that written into ID3v2 tag
+	 * Command SEARCH searches received search query in the lyrics of every file in the list
 	 */
 	public enum Command {
 		BURNDOWN, SHOWL, GETL, SEARCH, INDETERMINATE
@@ -30,7 +37,7 @@ public class ProcessorAPI implements Runnable {
 		OK, NOTFOUND, ERR, NOTAG, EXISTING, INDETERMINATE
 	}
 	public static final String REWRITE_FILE_SUFFIX = ".x";
-	private static final int MAX_ATTEMPTS_AMOUNT = 7, MAX_REDIRECTIONS = 3;
+	private final int MAX_ATTEMPTS = 7, MAX_REDIRECTIONS = 3;
 	
 	
 	private Thread _t;
@@ -51,9 +58,9 @@ public class ProcessorAPI implements Runnable {
 		public void onShowLComplete (String _result, boolean _found);
 		public void onGetLComplete (int _ok, int _nf, int _nt, int _er, int _ex);
 		//Ok, Not Found, No Tag, Error, Existing Lyrics
-		public void onBurndownLComplete ();
+		public void onBurndownComplete ();
 		public void onSearchComplete (ArrayList<File> _result);
-		public void onComplete (String _result, Command _mode);
+		public void onComplete (Command _mode);
 	}
 	
 	ProcessorAPI(ProcessorListener _l){
@@ -99,7 +106,7 @@ public class ProcessorAPI implements Runnable {
 			if (mode == Command.SHOWL){
 				String _lyr = pullLyrics(artist, title, 0, forcecase);
 				listener.onShowLComplete(_lyr, _lyr != "NF");
-				listener.onComplete(_lyr, mode);
+				listener.onComplete(mode);
 			}else{
 				//Common filerunner
 				//Luke Filewalker
@@ -116,16 +123,9 @@ public class ProcessorAPI implements Runnable {
 						return;
 					}
 				}
-				/*
-				 * If processor implements SEARCH command, searchCapacitor is filled 
-				 * with search results and will be thrown on the outside
-				 * Else, searchCapacitor is always empty;
-				 *//*
-				 * I have no idea how to do it right. Sorry
-				 */
 				switch(mode){
 				case BURNDOWN:
-					listener.onBurndownLComplete();
+					listener.onBurndownComplete();
 					break;
 				case GETL:
 					listener.onGetLComplete(glr_ok, glr_nf, glr_nt, glr_er, glr_ex);
@@ -135,7 +135,7 @@ public class ProcessorAPI implements Runnable {
 					break;
 				default:
 				}
-				listener.onComplete(searchCapacitor, mode);
+				listener.onComplete(mode);
 			}
 			active = false;
 	}
@@ -235,7 +235,7 @@ public class ProcessorAPI implements Runnable {
 	}
 	//http://inversekarma.in/technology/net/fetching-lyrics-from-lyricwiki-in-c/
 	private String pullLyrics(String _artist, String _title, int depth, boolean _fg){
-		if (depth >= MAX_ATTEMPTS_AMOUNT){
+		if (depth >= MAX_ATTEMPTS){
 			//writeline("Timeout. Please, try again later");
 			return ("NF");//Should try throw(Reached attempts limit)
 		}

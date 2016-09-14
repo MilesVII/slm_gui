@@ -11,7 +11,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
@@ -25,6 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProcessorActivity extends Activity {
+	/*
+	 * ProcessorActivity functions:
+	 * > Manage UI
+	 * > Define ProcessorAPI behavior and let it interact with UI
+	 * > Pass instructions that received from MainActivity to ProcessorAPI via ProcessorService
+	 */
 	public static ProcessorActivity me;
 	public ProcessorAPI processor;
 	public static final String EXTRA_FILES = "com.milesseventh.slm_gui.ef", 
@@ -40,6 +45,7 @@ public class ProcessorActivity extends Activity {
 	private Button ui_close;
 	private boolean stoped = false, simplifyUI = false;
 	private NotificationPone shoutingHorsey;
+	//Listener for entries that shows details of each processing file
 	private final OnClickListener entrylistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
@@ -47,11 +53,12 @@ public class ProcessorActivity extends Activity {
 			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus());
 		}
 	};
+	/////Start of behavior defining (About 200 lines)/////
 	public ProcessorAPI.ProcessorListener behavior = new ProcessorAPI.ProcessorListener(){
 		@Override
 		public void onStart(Command _mode) {
+			//Set status
 			final String _statusMessage;
-			
 			switch (_mode){
 			case SHOWL:
 				_statusMessage = getString(R.string.ui_loading);
@@ -66,10 +73,9 @@ public class ProcessorActivity extends Activity {
 				_statusMessage = getString(R.string.ui_erasing);
 				break;
 			default:
-				_statusMessage = "WAT";
+				_statusMessage = "Unreachable";
 				break;
 			}
-			
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
@@ -80,7 +86,7 @@ public class ProcessorActivity extends Activity {
 
 		@Override
 		public void onFileStarted(final int _position) {
-			File _victim = processing_list.get(_position);/*
+			/*File _victim = processing_list.get(_position);
 			try {
 				getContentResolver().openOutputStream(Uri.fromFile(_victim));
 			} catch (Exception ex) {
@@ -89,6 +95,7 @@ public class ProcessorActivity extends Activity {
 			}*/
 			/////////////////////////////////////
 			
+			//Change state of processing entry
 			if (!simplifyUI)
 				entries[_position].setStatus(me, getString(R.string.ui_stat_processing), 
 											 R.drawable.pointer);
@@ -102,7 +109,6 @@ public class ProcessorActivity extends Activity {
 										   processing_list.size() + ')');
 					}
 				});
-			//refreshConsole(markoutConsoleEntry(_position));
 		}
 
 		@Override
@@ -110,9 +116,10 @@ public class ProcessorActivity extends Activity {
 			final String _temp;
 			String _snippet = null;
 			final int _ico;
-			File _victim = entries[_position].getFile();
+			File _victim = processing_list.get(_position);
 			boolean _showsnippet = false;
 			
+			//Choose icon for processed entry
 			switch(_result){
 			case OK:
 				_temp = getString(R.string.ui_ok);
@@ -141,6 +148,7 @@ public class ProcessorActivity extends Activity {
 				_ico = R.drawable.error;
 			}
 
+			//Set snippet of lyrics of processed file
 			try {
 				if (_showsnippet)
 					_snippet = ProcessorAPI.getLyricsFromTag(_victim);
@@ -148,13 +156,17 @@ public class ProcessorActivity extends Activity {
 				SharedMethodsContainer.showError(me, ex);
 				ex.printStackTrace();
 			}
-			final String _snip = _snippet;//Argh
+			final String _snip = _snippet;
 			
+			//Change state of progressbars and set entry status
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
+					//Progress bar
 					ui_progress.setProgress(_position + 1);
+					//Notification
 					shoutingHorsey.show(_position + 1);
+					//Entry
 					if (!simplifyUI){
 						entries[_position].setStatus(me, getString(R.string.ui_stat_processed) + 
 								": " + _temp, _ico);
@@ -163,20 +175,29 @@ public class ProcessorActivity extends Activity {
 					}
 				}
 			});
-			//console[_position] += " - " + _temp;
-			//refreshConsole(console);
 		}
 
 		@Override
 		public void onError(final int _errorentry, final Exception _ex) {
+			//Save error details to entry
 			_ex.printStackTrace();
 			if (!simplifyUI){
 				entries[_errorentry].setStatus(me, getString(R.string.ui_stat_processed) + 
 						": " + _ex.getMessage(), R.drawable.error);
 				entries[_errorentry].freezeStatus();
+			} else {
+				runOnUiThread(new Runnable(){
+					@Override
+					public void run(){
+						UiProcessingEntry _rottingcorpse = addEntry(processing_list.get(_errorentry));
+						_rottingcorpse.setStatus(me, getString(R.string.ui_stat_processed) + ": " + _ex.getMessage(), R.drawable.error);
+						_rottingcorpse.freezeStatus();
+					}
+				});
 			}
 		}
 
+		//Competed events for every command
 		@Override
 		public void onShowLComplete(final String _result, final boolean _found) {
 			runOnUiThread(new Runnable(){
@@ -207,7 +228,7 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onBurndownLComplete() {
+		public void onBurndownComplete() {
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
@@ -237,7 +258,8 @@ public class ProcessorActivity extends Activity {
 		}
 		
 		@Override
-		public void onComplete(final String _result, final Command _mode) {
+		public void onComplete(final Command _mode) {
+			//Work is done
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
@@ -256,6 +278,7 @@ public class ProcessorActivity extends Activity {
 	/////End of behavior defining/////
 	
 	@Override
+	//Handling hardware back-button
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	if (stoped)
@@ -269,11 +292,7 @@ public class ProcessorActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle _sI) {
 		super.onCreate(_sI);
-
 		me = this;
-		Bundle _instructions = getIntent().getExtras();
-		processing_list = (ArrayList<File>) _instructions.get(EXTRA_FILES);
-		shoutingHorsey = new NotificationPone(this);
 		
 		setContentView(R.layout.processing);
 		ui_status = (TextView) findViewById(R.id.p_status);
@@ -282,6 +301,14 @@ public class ProcessorActivity extends Activity {
 		ui_close = (Button) findViewById(R.id.pr_b_close);
 		ui_progress = (ProgressBar) findViewById(R.id.p_progress);
 		
+		//Extract received list of files
+		Bundle _instructions = getIntent().getExtras();
+		processing_list = (ArrayList<File>) _instructions.get(EXTRA_FILES);
+		
+		//Instantiate notification manager
+		shoutingHorsey = new NotificationPone(this);
+		
+		//Initialize list of processing entries
 		if (processing_list != null){
 			simplifyUI = SharedMethodsContainer.loadQueueLimitFromPreferences(this) < processing_list.size();
 			if (!simplifyUI){
@@ -295,11 +322,12 @@ public class ProcessorActivity extends Activity {
 			shoutingHorsey.show(0);
 			ui_progress.setMax(processing_list.size());
 		}
+		
 		ui_close.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick (View no){
 				stopOrFinish((Button)no);
-				if (!stoped)//Its strange
+				if (!stoped)
 					ui_status.setText(R.string.ui_aborted);
 			}
 		});
@@ -315,17 +343,18 @@ public class ProcessorActivity extends Activity {
 				return true;
 			}
 		});
-
+		
+		//Start ProcessorService
 		processorIntent = new Intent(this, ProcessorService.class);
 		processorIntent.putExtras(_instructions);
 		processor = new ProcessorAPI(behavior);
 		startService(processorIntent);
 	}
 	
-	@Override
+	/*@Override
 	public void onStop(){
 		super.onStop();
-	}
+	}*/
 	
 	public void stopOrFinish (final Button _butt){
 		if(stoped){
@@ -345,26 +374,7 @@ public class ProcessorActivity extends Activity {
 			stoped = true;
 		}
 	}
-	/*
-	private String[] markoutConsoleEntry(int _processingEntry){
-		String[] _mirror = console.clone();
-		_mirror[_processingEntry] = "> " + _mirror[_processingEntry] + " - " + getString(R.string.ui_processing);
-		return _mirror;
-	}
-	
-	private void refreshConsole(String[] _victim){
-		String _capacitor = "";
-		for (String _pegasus : _victim)
-			_capacitor += _pegasus + "\n";
-		final String _fuckyouall = _capacitor;
-		runOnUiThread(new Runnable(){
-			@Override
-			public void run(){
-				ui_console.setText(_fuckyouall);
-			}
-		});
-	}
-	*/
+
 	private UiProcessingEntry addEntry (File _victim){
 		UiProcessingEntry _ = new UiProcessingEntry (this, _victim, 
 													 PreferenceManager.getDefaultSharedPreferences(this)

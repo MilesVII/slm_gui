@@ -11,7 +11,11 @@ import android.os.Bundle;
 import android.support.v4.provider.DocumentFile;
 
 public class ReceptionActivity extends Activity {
-	public static DocumentFile accessibleTree = null;
+	/*
+	 * ReceptionActivity is a launcher activity. 
+	 * It's only function is to define behavior when application is started. 
+	 * It starts ProcessorActivity if file processor is running, else calls MainActivity
+	 */
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

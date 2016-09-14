@@ -7,7 +7,9 @@ import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class UiFileEntry extends UiEntry {
-
+	/*
+	 * Entry that is shown in MainActivity, created by FileChooser
+	 */
 	public UiFileEntry(Context _ctxt, File _victim, boolean _showtagtitle, boolean _ison, OnCheckedChangeListener _occl,
 			OnClickListener _ocl, OnLongClickListener _olcl) {
 		super(_ctxt, _victim, _showtagtitle);

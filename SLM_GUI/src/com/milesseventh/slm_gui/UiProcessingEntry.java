@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class UiProcessingEntry extends UiEntry {
+	/*
+	 * Entry that is shown in ProcessorActivity
+	 */
 	private final int LYRICS_SNIPPET_SIZE = 300;
 	private String status, snippet;
 	private ImageView icon;

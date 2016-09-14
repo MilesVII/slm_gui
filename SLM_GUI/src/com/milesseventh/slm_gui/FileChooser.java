@@ -2,9 +2,9 @@ package com.milesseventh.slm_gui;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Vector;
 
 import android.content.Context;
 import android.view.View;
@@ -13,8 +13,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 
 public class FileChooser extends LinearLayout {
-	/*Class is specified and depends UiEntry, UiFileEntry classes and mp3agic lib*/
-	private Vector<File> selection = new Vector<File>();
+	/*Class is specified and depends on UiEntry, UiFileEntry classes and mp3agic lib*/
+	private ArrayList<File> selection = new ArrayList<File>();
 	private boolean showtagtitle;
 	private File currentPath = new File("/storage");
 	private final OnClickListener entrylistener = new OnClickListener() {
@@ -93,7 +93,7 @@ public class FileChooser extends LinearLayout {
 		//onSelection.run();
 	}
 
-	public Vector<File> getSelected(){
+	public ArrayList<File> getSelected(){
 		return selection;
 	}
 	
@@ -102,6 +102,7 @@ public class FileChooser extends LinearLayout {
 									  checklistener, entrylistener, cml));
 	}
 	
+	//Check if file is in the selection
 	public boolean checksync (File _file){
 		if (_file.isDirectory()){
 			return checksync_dir (_file);
@@ -109,7 +110,6 @@ public class FileChooser extends LinearLayout {
 			return selection.contains(_file);
 		}
 	}
-	
 	public boolean checksync_dir (File _lick){
 		String _victimastyteeth = _lick.getPath();
 		for (File _saliva : selection)
@@ -118,7 +118,8 @@ public class FileChooser extends LinearLayout {
 		return false;
 	}
 
-	private void addSubFiles (File _dir, Vector<File> _receiver){
+	//Add all subfiles to selection
+	private void addSubFiles (File _dir, ArrayList<File> _receiver){
 		for (File _saliva : _dir.listFiles())
 			if (_saliva.isDirectory()){
 				if (!_saliva.getName().startsWith("."))
@@ -129,8 +130,9 @@ public class FileChooser extends LinearLayout {
 				_receiver.add(_saliva);
 	}
 
-	private void remSubFiles (File _dir, Vector<File> _receiver){
-		Vector<File> _holder = new Vector<File>(selection);
+	//Remove all subfiles from selection
+	private void remSubFiles (File _dir, ArrayList<File> _receiver){
+		ArrayList<File> _holder = new ArrayList<File>(selection);
 		String _victimastyteeth = _dir.getPath();
 		for (File _saliva : selection)
 			if (_saliva.getPath().startsWith(_victimastyteeth))

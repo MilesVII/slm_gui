@@ -10,6 +10,9 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 
 public class UiEntry extends LinearLayout {
+	/*
+	 * Base class for UiProcessingEntry and UiFileEntry
+	 */
 	protected File heart;
 	protected String title = "NOT INITIALIZED!", heartname;
 	protected char heartisdir;

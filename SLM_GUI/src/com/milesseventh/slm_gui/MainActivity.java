@@ -1,19 +1,20 @@
 package com.milesseventh.slm_gui;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.milesseventh.slm_gui.sdfix.SDFix;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.provider.DocumentFile;
+import android.support.v4.app.ActivityCompat;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,10 +26,15 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	/*
+	 * MainActivity manages FileChooser class to let user pick some files and then does pass list of collected files to ProcessorActivity, defining which command to execute 
+	 */
 	private final Activity _ctxt = this;
 	private static Activity _act;
+	
 	private FileChooser selector;
 	private int REQUEST_SDCARD = 42;
+	//Listener that creates context menu when an entry is long-tapped
 	private final OnLongClickListener cmlistener = new OnLongClickListener() {
 		@Override
 		public boolean onLongClick(View callofktulu) {
@@ -38,12 +44,14 @@ public class MainActivity extends Activity {
 			return true;
 		}
 	};
-	/*private final OnClickListener clearlistener = new OnClickListener() {
+	//Listener for button that clears selection
+	private final OnClickListener clearlistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
-			selector.clear();;
+			selector.clear();
 		}
-	};*/
+	};
+	//Listener for button that shows list of selected files
 	private final OnClickListener showlistener = new OnClickListener() {
 		@Override
 		public void onClick(View callofktulu) {
@@ -71,11 +79,8 @@ public class MainActivity extends Activity {
 		}
 	};
 	
-	public void clearButton(View _no){
-		selector.clear();
-	}
-	
 	@Override
+	//Handling hardware back-button
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
 	    	selector.up();
@@ -84,14 +89,16 @@ public class MainActivity extends Activity {
 	    return super.onKeyDown(keyCode, event);
 	}
 	
+	@SuppressLint("InlinedApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_act = _ctxt;
 		
 		//Getting additional permissions to access filesystem
-		//Requesting sdcard access for for KitKat...
-		if (android.os.Build.VERSION.SDK_INT == 19 || android.os.Build.VERSION.SDK_INT == 20){
+		int _ver = android.os.Build.VERSION.SDK_INT;
+		//Requesting sdcard access for for KitKat (4.3)...
+		if (_ver == 19 || _ver == 20){
 			try {
 				if (!SDFix.isRemovableStorageWritableFixApplied()){
 					showConfirmationDialog(getString(R.string.ui_sdfix_caution), new Confirmator.ConfirmatorListener() {
@@ -108,15 +115,21 @@ public class MainActivity extends Activity {
 					});
 				}
 			} catch (Exception ex) {
+				SharedMethodsContainer.showError(this, ex);
 				ex.printStackTrace();
 			}
-		} else if (android.os.Build.VERSION.SDK_INT > 20){
-			//...and for Android 5.0+
+		} else if (_ver > 20){
+			//...and for Lollipop (5.0)+
 			if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)){
 				SharedMethodsContainer.showInfoDialog(this, getString(R.string.ui_sdaccesswarning_title), getString(R.string.ui_sdaccesswarning));
 				Editor _tiemetight = PreferenceManager.getDefaultSharedPreferences(this).edit();
 				_tiemetight.putBoolean("isFirstRun", false);
 				_tiemetight.commit();
+			}
+			//Asking for additional permission on Marshmallow (6.0)+
+			if (_ver >= 22 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+				String[] _lovebites = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+				ActivityCompat.requestPermissions(this, _lovebites, 1);
 			}
 		}
 		
@@ -137,9 +150,8 @@ public class MainActivity extends Activity {
 			PreferenceManager.getDefaultSharedPreferences(this).getBoolean("show_victimagtitle", false));
 		((ScrollView) findViewById(R.id.central)).addView(selector);
 		((Button) findViewById(R.id.b_showsel)).setOnClickListener(showlistener);
+		((Button) findViewById(R.id.b_clearsel)).setOnClickListener(clearlistener);
 	}
-	
-	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,14 +204,17 @@ public class MainActivity extends Activity {
 	
 	@SuppressLint("InlinedApi")
 	@Override
+	//Called when user closes sdcard acess dialog
 	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode != REQUEST_SDCARD || resultCode != RESULT_OK)
 			return;
+		@SuppressWarnings("unused")
 		Uri treeUri = data.getData();
-		ReceptionActivity.accessibleTree = DocumentFile.fromTreeUri(this, treeUri);
+		//SharedMethodsContainer.accessibleTree = DocumentFile.fromTreeUri(this, treeUri);
 	}
 
-	public void startProcessorActivity(ProcessorAPI.Command _com, Vector<File> _sel, String[] _meta){
+	//Pass collected information to file processor
+	public void startProcessorActivity(ProcessorAPI.Command _com, ArrayList<File> _sel, String[] _meta){
 		Intent _bukake = new Intent(this, ProcessorActivity.class);
 		_bukake.setAction(Intent.ACTION_VIEW);
 		_bukake.putExtra(ProcessorActivity.EXTRA_COMMAND, _com);
@@ -233,6 +248,6 @@ public class MainActivity extends Activity {
 	}
 	
 	public static Activity getInstance(){
-		return (_act);
+		return _act;
 	}
 }

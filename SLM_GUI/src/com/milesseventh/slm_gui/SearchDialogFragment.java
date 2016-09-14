@@ -1,9 +1,10 @@
 package com.milesseventh.slm_gui;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import android.app.AlertDialog.Builder;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
@@ -12,12 +13,13 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 
 public class SearchDialogFragment extends DialogFragment {
-	private Vector<File> _x;
+	private ArrayList<File> _x;
 	
-	public void setList(Vector<File> __){
+	public void setList(ArrayList<File> __){
 		_x = __;
 	}
 	
+	@SuppressLint("InflateParams")
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		Builder _builder = new Builder(getActivity());
