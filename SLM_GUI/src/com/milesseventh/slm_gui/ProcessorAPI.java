@@ -37,17 +37,18 @@ public class ProcessorAPI implements Runnable {
 		OK, NOTFOUND, ERR, NOTAG, EXISTING, INDETERMINATE
 	}
 	public static final String REWRITE_FILE_SUFFIX = ".x";
+	public static final int GLR_OK = 0, GLR_NF = 1, GLR_NT = 2, GLR_ER = 3, GLR_EX = 4; 
 	private final int MAX_ATTEMPTS = 7, MAX_REDIRECTIONS = 3;
 	
 	
 	private Thread _t;
 	private boolean active;
 	private Command mode = Command.INDETERMINATE;
-	private String artist, title, query, searchCapacitor = "";
-	private boolean forcecase;
+	private String artist, title, query, customParserUrl;
+	private boolean forceCase, useCustomParser = false;
 	private ArrayList<File> processingList, searchResult = new ArrayList<File>();
-	private int redir_amount = 0, glr_ok = 0, glr_nf = 0, 
-				glr_nt = 0, glr_er = 0, glr_ex = 0;
+	private int redir_amount = 0;
+	private int[] glresults = {0, 0, 0, 0, 0};
 	private ProcessorListener listener;
 	
 	public interface ProcessorListener{
@@ -56,7 +57,7 @@ public class ProcessorAPI implements Runnable {
 		public void onFileProcessed (int _position, Result _result);
 		public void onError (int _position, Exception _ex);
 		public void onShowLComplete (String _result, boolean _found);
-		public void onGetLComplete (int _ok, int _nf, int _nt, int _er, int _ex);
+		public void onGetLComplete (int[] glResults);
 		//Ok, Not Found, No Tag, Error, Existing Lyrics
 		public void onBurndownComplete ();
 		public void onSearchComplete (ArrayList<File> _result);
@@ -76,13 +77,18 @@ public class ProcessorAPI implements Runnable {
 		mode = Command.SHOWL;
 		artist = _art.trim();
 		title = _tit.trim();
-		forcecase = _fc;
+		forceCase = _fc;
 	}
 
 	public void setSearchParams (ArrayList<File> _pl, String _query){
 		mode = Command.SEARCH;
 		processingList = _pl;
 		query = _query.toLowerCase().trim();
+	}
+
+	public void setCustomParser (String _url){
+		useCustomParser = true;
+		customParserUrl = _url;
 	}
 	
 	public void start(){
@@ -104,7 +110,12 @@ public class ProcessorAPI implements Runnable {
 	@Override
 	public void run() {
 			if (mode == Command.SHOWL){
-				String _lyr = pullLyrics(artist, title, 0, forcecase);
+				String _lyr;
+				try {
+					_lyr = pullLyrics(artist, title, 0, forceCase);
+				} catch (IOException _ex) {
+					_lyr = _ex.getMessage();
+				}
 				listener.onShowLComplete(_lyr, _lyr != "NF");
 				listener.onComplete(mode);
 			}else{
@@ -128,7 +139,7 @@ public class ProcessorAPI implements Runnable {
 					listener.onBurndownComplete();
 					break;
 				case GETL:
-					listener.onGetLComplete(glr_ok, glr_nf, glr_nt, glr_er, glr_ex);
+					listener.onGetLComplete(glresults);
 					break;
 				case SEARCH:
 					listener.onSearchComplete(searchResult);
@@ -161,20 +172,20 @@ public class ProcessorAPI implements Runnable {
 					_lyr = pullLyricsWrapper(_unicorn, true);
 					redir_amount = 0;
 					if (_lyr == "NF"){
-						glr_nf++;
+						glresults[GLR_NF]++;
 						return Result.NOTFOUND;
 					} else if (_lyr == "NT"){
-						glr_nt++;
+						glresults[GLR_NT]++;
 						return Result.NOTAG;
 					} else if (_lyr.startsWith("EXIMAGIK:")){
-						glr_ex++;
+						glresults[GLR_EX]++;
 						return Result.EXISTING;
 					} else {
-						glr_ok++;
+						glresults[GLR_OK]++;
 						return Result.OK;
 					}
 				} catch (Exception ex){
-					glr_er++;
+					glresults[GLR_ER]++;
 					listener.onError(_position, ex);
 					return Result.ERR;
 				}
@@ -185,7 +196,7 @@ public class ProcessorAPI implements Runnable {
 					_lyr = __.getLyrics();
 					if (_lyr != null)
 						if (_lyr.toLowerCase().contains(query)){
-							searchCapacitor += _unicorn.getName() + "\n";
+							//searchCapacitor += _unicorn.getName() + "\n";
 							searchResult.add(_unicorn);
 							return Result.OK;
 						}
@@ -209,16 +220,19 @@ public class ProcessorAPI implements Runnable {
 		ID3v2 _victimtag = _victim.getId3v2Tag();
 		if(!_victim.hasId3v2Tag()/* || _victimtag.getTitle() == null*/)//hasid3v2tag is modified
 			return("NT");
-		boolean trywithoutparesis = false;
 		if (_victimtag.getLyrics() == null){
-			String santitle = _victimtag.getTitle();
-			if (_victimtag.getTitle().contains("(") && _victimtag.getTitle().indexOf("(") != 0){
-				santitle = _victimtag.getTitle().substring(0, _victimtag.getTitle().indexOf("(") - 1);
-				trywithoutparesis = true;
+			String santitle = null, rawtitle = _victimtag.getTitle().replace('[', '(').replace(']', ')');
+			if (rawtitle.contains("(") && rawtitle.indexOf("(") != 0){
+				santitle = rawtitle.substring(0, _victimtag.getTitle().indexOf("(") - 1);
 			}
-			String _lyr = pullLyrics(_victimtag.getArtist(), _victimtag.getTitle().replace('[', '(').replace(']', ')'), 0, false);
-			if (_lyr == "NF" && trywithoutparesis){
-				_lyr = pullLyrics(_victimtag.getArtist(), santitle.replace('[', '(').replace(']', ')'), 0, false);
+			String _lyr = pullLyrics(_victimtag.getArtist(), rawtitle, 0, false);
+			if (_lyr == "NF" && santitle != null)
+				_lyr = pullLyrics(_victimtag.getArtist(), santitle, 0, false);
+			if (useCustomParser){
+				if (_lyr == "NF")
+					_lyr = pullLyricsUsingCustomPHPParser(customParserUrl, _victimtag.getArtist(), rawtitle, 0, false);
+				if (_lyr == "NF" && santitle != null)
+					_lyr = pullLyricsUsingCustomPHPParser(customParserUrl, _victimtag.getArtist(), santitle, 0, false);
 			}
 			if (_lyr != "NF" && _lyr != null)
 				if (writeintotag){
@@ -233,8 +247,9 @@ public class ProcessorAPI implements Runnable {
 		}else
 			return("EXIMAGIK:" + _victimtag.getLyrics());//Lyrics already exist
 	}
+	
 	//http://inversekarma.in/technology/net/fetching-lyrics-from-lyricwiki-in-c/
-	private String pullLyrics(String _artist, String _title, int depth, boolean _fg){
+	private String pullLyrics(String _artist, String _title, int depth, boolean _fg) throws IOException{
 		if (depth >= MAX_ATTEMPTS){
 			//writeline("Timeout. Please, try again later");
 			return ("NF");//Should try throw(Reached attempts limit)
@@ -243,7 +258,7 @@ public class ProcessorAPI implements Runnable {
 		String _lyrics, _cleanurl;
 		int iStart = 0;
 		int iEnd = 0;
-		String _rawquery = sanitize(_artist, _fg) + ":" + sanitize(_title, _fg);
+		String _rawquery = sanitize(_artist) + ":" + sanitize(_title);
 		
 		_cleanurl = "http://lyrics.wikia.com/index.php?title=";
 		try {
@@ -282,8 +297,28 @@ public class ProcessorAPI implements Runnable {
 		
 		return (_lyrics.substring(iStart, iEnd).trim().replace("&amp;", "&"));
 	}
+	
+	private String pullLyricsUsingCustomPHPParser(String _scripturl, String _artist, String _title, int depth, boolean _fg) throws IOException{
+		String _lyrics;
+		_artist = sanitize(_artist);
+		_title = sanitize(_title);
+		
+		String _url;
+		try {
+			_url = _scripturl.replaceAll("<A>", URLEncoder.encode(_artist, "UTF-8"))
+							 .replaceAll("<T>", URLEncoder.encode(_title, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			return("NF");
+		}
+		_lyrics = pageDown(_url);
+		
+		if (_lyrics.equalsIgnoreCase("")){
+			return ("NF");
+		}
+		return (_lyrics);
+	}
 
-	private String pageDown(String _url){
+	private String pageDown(String _url) throws IOException{
 	    String line = "", all = "";
 	    URL myUrl = null;
 	    BufferedReader in = null;
@@ -294,7 +329,7 @@ public class ProcessorAPI implements Runnable {
 	        while ((line = in.readLine()) != null) {
 	            all += line + "\n";
 	        }
-	    } catch (MalformedURLException e) {} catch (IOException e) {} 
+	    }
 	    finally {
 	        if (in != null) {
 	            try {
@@ -307,15 +342,13 @@ public class ProcessorAPI implements Runnable {
 	    return (all);
 	}
 	//Method replaces first letter of all words to UPPERCASE and replaces all spaces with underscores.
-	private String sanitize(String s, boolean _fg){
+	private String sanitize(String s){
 		char[] array = s.trim().toCharArray();
-		if (!_fg){
-			if (array.length >= 1 && Character.isLowerCase(array[0]))
-					array[0] = Character.toUpperCase(array[0]);
-			for (int i = 1; i < array.length; i++)
-				if (array[i - 1] == ' ' && Character.isLowerCase(array[i]))
-						array[i] = Character.toUpperCase(array[i]);
-		}
+		if (array.length >= 1 && Character.isLowerCase(array[0]))
+				array[0] = Character.toUpperCase(array[0]);
+		for (int i = 1; i < array.length; i++)
+			if (array[i - 1] == ' ' && Character.isLowerCase(array[i]))
+					array[i] = Character.toUpperCase(array[i]);
 		return new String(array).trim().replace(' ', '_')/*.replace("&", "%26")*/;
 	}
 	

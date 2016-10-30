@@ -37,7 +37,7 @@ public class ProcessorActivity extends Activity {
 							   EXTRA_META = "com.milesseventh.slm_gui.meta",
 							   EXTRA_BEHAVIOR = "com.milesseventh.slm_gui.bh";
 	private Intent processorIntent;
-	private ArrayList<File> processing_list;
+	private ArrayList<File> processingList;
 	private UiProcessingEntry[] entries;
 	private TextView ui_status, ui_console;
 	private ProgressBar ui_progress;
@@ -50,7 +50,7 @@ public class ProcessorActivity extends Activity {
 		@Override
 		public void onClick(View callofktulu) {
 			UiProcessingEntry _t = (UiProcessingEntry) callofktulu;
-			SharedMethodsContainer.showInfoDialog(me, _t.getTitle(), _t.getStatus());
+			Utils.showInfoDialog(me, _t.getTitle(), _t.getStatus());
 		}
 	};
 	/////Start of behavior defining (About 200 lines)/////
@@ -86,15 +86,6 @@ public class ProcessorActivity extends Activity {
 
 		@Override
 		public void onFileStarted(final int _position) {
-			/*File _victim = processing_list.get(_position);
-			try {
-				getContentResolver().openOutputStream(Uri.fromFile(_victim));
-			} catch (Exception ex) {
-				SharedMethodsContainer.showError(me, ex);
-				ex.printStackTrace();
-			}*/
-			/////////////////////////////////////
-			
 			//Change state of processing entry
 			if (!simplifyUI)
 				entries[_position].setStatus(me, getString(R.string.ui_stat_processing), 
@@ -103,10 +94,10 @@ public class ProcessorActivity extends Activity {
 				runOnUiThread(new Runnable(){
 					@Override
 					public void run(){
-						ui_console.setText(processing_list.get(_position).getName() + ": " + 
+						ui_console.setText(processingList.get(_position).getName() + ": " + 
 										   getString(R.string.ui_stat_processing) +
 										   " (" + (_position + 1) + '/' + 
-										   processing_list.size() + ')');
+										   processingList.size() + ')');
 					}
 				});
 		}
@@ -116,7 +107,7 @@ public class ProcessorActivity extends Activity {
 			final String _temp;
 			String _snippet = null;
 			final int _ico;
-			File _victim = processing_list.get(_position);
+			File _victim = processingList.get(_position);
 			boolean _showsnippet = false;
 			
 			//Choose icon for processed entry
@@ -153,7 +144,7 @@ public class ProcessorActivity extends Activity {
 				if (_showsnippet)
 					_snippet = ProcessorAPI.getLyricsFromTag(_victim);
 			} catch (Exception ex) {
-				SharedMethodsContainer.showError(me, ex);
+				Utils.showError(me, ex);
 				ex.printStackTrace();
 			}
 			final String _snip = _snippet;
@@ -181,19 +172,19 @@ public class ProcessorActivity extends Activity {
 		public void onError(final int _errorentry, final Exception _ex) {
 			//Save error details to entry
 			_ex.printStackTrace();
-			if (!simplifyUI){
-				entries[_errorentry].setStatus(me, getString(R.string.ui_stat_processed) + 
-						": " + _ex.getMessage(), R.drawable.error);
-				entries[_errorentry].freezeStatus();
-			} else {
+			if (simplifyUI){
 				runOnUiThread(new Runnable(){
 					@Override
 					public void run(){
-						UiProcessingEntry _rottingcorpse = addEntry(processing_list.get(_errorentry));
+						UiProcessingEntry _rottingcorpse = addEntry(processingList.get(_errorentry));
 						_rottingcorpse.setStatus(me, getString(R.string.ui_stat_processed) + ": " + _ex.getMessage(), R.drawable.error);
 						_rottingcorpse.freezeStatus();
 					}
 				});
+			} else {
+				entries[_errorentry].setStatus(me, getString(R.string.ui_stat_processed) + 
+						": " + _ex.getMessage(), R.drawable.error);
+				entries[_errorentry].freezeStatus();
 			}
 		}
 
@@ -213,16 +204,16 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onGetLComplete(final int _ok, final int _nf, final int _nt, final int _er, final int _ex) {
+		public void onGetLComplete(final int[] _glresults) {
 			runOnUiThread(new Runnable(){
 				@Override
 				public void run(){
-					ui_status.setText(getString(R.string.ui_ok) + ": " + _ok + "\n" +
-									 getString(R.string.ui_ignored) + ": " + _ex + "\n" +
-									 getString(R.string.ui_notfound) + ": " + _nf + "\n" +
-									 getString(R.string.ui_e_id3v2) + ": " + _nt + "\n" +
-									 getString(R.string.ui_e) + ": " + _er + "\n" +
-									 getString(R.string.ui_sumtotal) + ": " + (_ok + _nf + _nt + _er + _ex));
+					ui_status.setText(getString(R.string.ui_ok) + ": " + _glresults[ProcessorAPI.GLR_OK] + "\n" +
+									 getString(R.string.ui_ignored) + ": " + _glresults[ProcessorAPI.GLR_EX] + "\n" +
+									 getString(R.string.ui_notfound) + ": " + _glresults[ProcessorAPI.GLR_NF] + "\n" +
+									 getString(R.string.ui_e_id3v2) + ": " + _glresults[ProcessorAPI.GLR_NT] + "\n" +
+									 getString(R.string.ui_e) + ": " + _glresults[ProcessorAPI.GLR_ER] + "\n" +
+									 getString(R.string.ui_sumtotal) + ": " + processingList.size());
 				}
 			});
 		}
@@ -303,24 +294,24 @@ public class ProcessorActivity extends Activity {
 		
 		//Extract received list of files
 		Bundle _instructions = getIntent().getExtras();
-		processing_list = (ArrayList<File>) _instructions.get(EXTRA_FILES);
+		processingList = (ArrayList<File>) _instructions.get(EXTRA_FILES);
 		
 		//Instantiate notification manager
 		shoutingHorsey = new NotificationPone(this);
 		
 		//Initialize list of processing entries
-		if (processing_list != null){
-			simplifyUI = SharedMethodsContainer.loadQueueLimitFromPreferences(this) < processing_list.size();
+		if (processingList != null){
+			simplifyUI = Utils.loadQueueLimitFromPreferences(this) < processingList.size();
 			if (!simplifyUI){
 				ui_list.removeView(ui_console);
-				entries = new UiProcessingEntry[processing_list.size()];
-				for(int _hh = 0; _hh < processing_list.size(); _hh++)
-					entries[_hh] = addEntry(processing_list.get(_hh));
+				entries = new UiProcessingEntry[processingList.size()];
+				for(int _hh = 0; _hh < processingList.size(); _hh++)
+					entries[_hh] = addEntry(processingList.get(_hh));
 			}
 			
-			shoutingHorsey.init(processing_list.size());
+			shoutingHorsey.init(processingList.size());
 			shoutingHorsey.show(0);
-			ui_progress.setMax(processing_list.size());
+			ui_progress.setMax(processingList.size());
 		}
 		
 		ui_close.setOnClickListener(new OnClickListener(){

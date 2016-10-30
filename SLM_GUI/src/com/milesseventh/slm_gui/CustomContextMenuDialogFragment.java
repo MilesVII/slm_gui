@@ -47,7 +47,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 							   _mudpone.getTitle());
 					_t.show(_ctxt.getFragmentManager(), "...");
 				} catch (Exception ex){
-					SharedMethodsContainer.showError(_ctxt, ex);
+					Utils.showError(_ctxt, ex);
 					ex.printStackTrace();
 				}
 				/* catch (UnsupportedTagException e) {
@@ -96,7 +96,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 		try {
 			editor.setText(ProcessorAPI.getLyricsFromTag(_file));
 		} catch (Exception ex) {
-			SharedMethodsContainer.showError(_ctxt, ex);//.showInfoDialog(_ctxt, getString(R.string.ui_e), ex.getMessage() + "\n" + ex.getLocalizedMessage());
+			Utils.showError(_ctxt, ex);//.showInfoDialog(_ctxt, getString(R.string.ui_e), ex.getMessage() + "\n" + ex.getLocalizedMessage());
 			ex.printStackTrace();
 			return;
 		}
@@ -128,7 +128,7 @@ public class CustomContextMenuDialogFragment extends DialogFragment {
 					ProcessorAPI.overkill(new File(_file), new File(_file + ".x"));*/
 					Toast.makeText(_ctxt, R.string.ui_saved, Toast.LENGTH_SHORT).show();
 				}  catch (Exception ex) {
-					SharedMethodsContainer.showError(_ctxt, ex);//.showInfoDialog(_ctxt, getString(R.string.ui_e), ex.getMessage() + "\n" + ex.getLocalizedMessage());
+					Utils.showError(_ctxt, ex);//.showInfoDialog(_ctxt, getString(R.string.ui_e), ex.getMessage() + "\n" + ex.getLocalizedMessage());
 					ex.printStackTrace();
 					return;
 				}

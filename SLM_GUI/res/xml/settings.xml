@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/ui_settings">
-    <CheckBoxPreference android:title="@string/ui_set_shownots" android:key="show_nots" android:defaultValue="true"/>
-    <CheckBoxPreference android:key="finish_on_complete" android:defaultValue="false" android:summary="@string/ui_set_foc" android:title="@string/ui_set_foc_short"/>
-    <CheckBoxPreference android:summary="@string/ui_set_showtag" android:key="show_tagtitle" android:defaultValue="false" android:title="@string/ui_set_showtag_short"/>
-    <EditTextPreference android:key="queue_limit" android:title="@string/ui_set_queue_limit_short" android:inputType="number" android:summary="@string/ui_set_queue_limit" android:defaultValue="170"/>
-
-
+    <CheckBoxPreference 
+        android:key="show_nots" 
+        android:title="@string/ui_set_shownots" 
+        android:defaultValue="true"/>
+    <CheckBoxPreference 
+        android:key="finish_on_complete" 
+        android:title="@string/ui_set_foc_short" 
+        android:summary="@string/ui_set_foc"
+        android:defaultValue="false"/>
+    <CheckBoxPreference 
+        android:key="show_tagtitle" 
+        android:title="@string/ui_set_showtag_short"
+        android:summary="@string/ui_set_showtag" 
+        android:defaultValue="false"/>
+    <EditTextPreference 
+        android:key="queue_limit" 
+        android:title="@string/ui_set_queue_limit_short"
+        android:summary="@string/ui_set_queue_limit" 
+        android:defaultValue="170" 
+        android:inputType="number"/>
+    <CheckBoxPreference 
+        android:key="use_php_parser" 
+        android:title="@string/ui_set_use_php_parser_short"  
+        android:summary="@string/ui_set_use_php_parser"
+        android:defaultValue="false"/>
+    <EditTextPreference 
+        android:key="php_parser_url" 
+        android:title="@string/ui_set_php_url" 
+        android:defaultValue='http://example.com/mycustomphpparser.php?artname="&lt;A&gt;";titname="&lt;T&gt;"' 
+        android:dialogMessage="@string/ui_set_php_url_cmnt"
+        android:dependency="use_php_parser"/>
 </PreferenceScreen>

@@ -39,7 +39,9 @@ public class ProcessorService extends IntentService {
 		default:
 			return;
 		}
-
+		if (Utils.isCustomParserUsed(this))
+			jack.setCustomParser(Utils.getCustomParserURL(this));
+		
 		jack.start();
     }
 

@@ -9,7 +9,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,13 +59,13 @@ public class MainActivity extends Activity {
 				public void run() {
 					String _t = "";
 					for (File _horsey : selector.getSelected())
-						_t += ">" + _horsey.getName() + ": " + _horsey.getPath() + "\n\n";
+						_t += ">" + _horsey.getName() + ":\n" + _horsey.getParent() + "\n\n";
 					if (_t.equals(""))
 						_t = getString(R.string.ui_nfs);
-					SharedMethodsContainer.showInfoDialog(_ctxt, getString(R.string.ui_selection), _t);
+					Utils.showInfoDialog(_ctxt, getString(R.string.ui_selection), _t);
 				}
 			};
-			if (SharedMethodsContainer.loadQueueLimitFromPreferences(_ctxt) < selector.getSelected().size()){
+			if (Utils.loadQueueLimitFromPreferences(_ctxt) < selector.getSelected().size()){
 				showConfirmationDialog(getString(R.string.ui_showing_big_selection_warning), new Confirmator.ConfirmatorListener() {
 					@Override
 					public void action() {
@@ -106,31 +105,28 @@ public class MainActivity extends Activity {
 						public void action() {
 							try {
 								SDFix.fixPermissions(_ctxt);
-								SharedMethodsContainer.showInfoDialog(_ctxt, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
+								Utils.showInfoDialog(_ctxt, getString(R.string.ui_done), getString(R.string.ui_sdfix_done));
 							} catch (Exception e) {
-								SharedMethodsContainer.showInfoDialog(_ctxt, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
+								Utils.showInfoDialog(_ctxt, getString(R.string.ui_e), getString(R.string.ui_sdfix_e) + e.getMessage());
 								e.printStackTrace();
 							}
 						}
 					});
 				}
 			} catch (Exception ex) {
-				SharedMethodsContainer.showError(this, ex);
+				Utils.showError(this, ex);
 				ex.printStackTrace();
 			}
 		} else if (_ver > 20){
 			//...and for Lollipop (5.0)+
-			if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true)){
-				SharedMethodsContainer.showInfoDialog(this, getString(R.string.ui_sdaccesswarning_title), getString(R.string.ui_sdaccesswarning));
-				Editor _tiemetight = PreferenceManager.getDefaultSharedPreferences(this).edit();
-				_tiemetight.putBoolean("isFirstRun", false);
-				_tiemetight.commit();
-			}
-			//Asking for additional permission on Marshmallow (6.0)+
-			if (_ver >= 22 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-				String[] _lovebites = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-				ActivityCompat.requestPermissions(this, _lovebites, 1);
-			}
+			if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isFirstRun", true))
+				Utils.showInfoDialog(this, getString(R.string.ui_sdaccesswarning_title), getString(R.string.ui_sdaccesswarning));
+			else
+				//Asking for additional permission on Marshmallow (6.0)+
+				if (_ver >= 22 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+					String[] _lovebites = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+					ActivityCompat.requestPermissions(this, _lovebites, 1);
+				}
 		}
 		
 		setContentView(R.layout.activity_main);
@@ -156,8 +152,6 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		if (android.os.Build.VERSION.SDK_INT <= 20)
-			menu.removeItem(R.id.action_sdcard);
 		return true;
 	}
 
@@ -165,7 +159,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getGroupId() == R.id.command_group && selector.getSelected().isEmpty()){
-			SharedMethodsContainer.showInfoDialog(this, getString(R.string.ui_e), getString(R.string.ui_nfs));
+			Utils.showInfoDialog(this, getString(R.string.ui_e), getString(R.string.ui_nfs));
 			return true;
 		}
 		switch (item.getItemId()){
@@ -195,22 +189,8 @@ public class MainActivity extends Activity {
 		case (R.id.action_exit):
 			finish();
 			return true;
-		case (R.id.action_sdcard):
-		    startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), REQUEST_SDCARD);
-			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-	
-	@SuppressLint("InlinedApi")
-	@Override
-	//Called when user closes sdcard acess dialog
-	public void onActivityResult(int requestCode, int resultCode, Intent data){
-		if (requestCode != REQUEST_SDCARD || resultCode != RESULT_OK)
-			return;
-		@SuppressWarnings("unused")
-		Uri treeUri = data.getData();
-		//SharedMethodsContainer.accessibleTree = DocumentFile.fromTreeUri(this, treeUri);
 	}
 
 	//Pass collected information to file processor

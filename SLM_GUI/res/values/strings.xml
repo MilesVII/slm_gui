@@ -75,11 +75,15 @@ milesseventh@gmail.com</string>
     
     <string name="ui_set_shownots">Show notifications</string>
     <string name="ui_set_foc">Close processing dialog when completed</string>
-    <string name="ui_set_showtag">Show track\'s name instead of filename (Affects speed!)</string>
+    <string name="ui_set_showtag">Show track\'s name instead of filename while processing (Affects speed!)</string>
     <string name="ui_set_foc_short">Autoclose when processed</string>
     <string name="ui_set_showtag_short">Show real title</string>
     <string name="ui_set_queue_limit_short">Queue size limit</string>
     <string name="ui_set_queue_limit">Amount of files that can be processed with normal UI (Large queues can seriously affect speed)</string>
+    <string name="ui_set_use_php_parser">Use custom PHP parser if lyrics can not be found (For advanced users)</string>
+    <string name="ui_set_use_php_parser_short">Use custom PHP parser</string>
+    <string name="ui_set_php_url">URL of PHP Script</string>    
+    <string name="ui_set_php_url_cmnt">Use \"&lt;A&gt;\" and \"&lt;T&gt;\" where artist name and song title should be placed</string>
     
     <string name="ui_sdfix_caution">Seems like the version of your system is 
 Android 4.4. The problem is that application cannot write to your sdcard without 
@@ -94,5 +98,5 @@ functions will still be working. Continue and modify system files\?</string>
     <string name="ui_stat_processed">File is processed</string>
     
     <string name="ui_sdaccesswarning_title">SDCard access</string>
-    <string name="ui_sdaccesswarning">Please, check out files that application can access using main menu</string>
+    <string name="ui_sdaccesswarning">Sorry, but application can not access your files being running on Android 5.0+</string>
 </resources>

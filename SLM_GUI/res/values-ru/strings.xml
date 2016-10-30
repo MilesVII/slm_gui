@@ -76,16 +76,20 @@ milesseventh@gmail.com</string>
     
     <string name="ui_set_shownots">Отображать уведомления</string>
     <string name="ui_set_foc">Автоматически закрывать окно обработки</string>
-    <string name="ui_set_showtag">Отображать название песни вместо имени файла (Снижает скорость работы!)</string>
+    <string name="ui_set_showtag">Отображать название песни вместо имени файла в процессе обработки (Снижает скорость работы!)</string>
     <string name="ui_set_foc_short">Автоматическое закрытие</string>
     <string name="ui_set_showtag_short">Названия песен</string>
     <string name="ui_set_queue_limit_short">Ограничение длины очереди</string>
     <string name="ui_set_queue_limit">Число файлов, при обработке которых используется обычный вневшний вид. При превышении будет использован упрощенный вид.</string>
+    <string name="ui_set_use_php_parserui_set_use_php_parser">Использовать сторонний PHP-парсер, если текст песни не найден (Для опытных пользователей)</string>
+    <string name="ui_set_use_php_parserui_set_use_php_parser_short">Использовать сторонний PHP-парсер</string>
+    <string name="ui_set_php_url">URL вашего PHP-скрипта</string>    
+    <string name="ui_set_php_url_cmnt">Используйте \"&lt;A&gt;\" и \"&lt;T&gt;\" там, где должны быть имя исполнителя и название трека</string>
     
     
-    <string name="ui_sdfix_caution">Похоже, версия вашей ОС - Android 4.4 или выше. Проблема в том, 
+    <string name="ui_sdfix_caution">Похоже, версия вашей ОС - Android 4.4. Проблема в том, 
 что приложение не может производить запись данных в файлы без внесения некоторых изменений в 
-системные настройки. Данная операция безвредна и не влияет на стабильность работы устройства. 
+системных настройках. Данная операция безвредна и не влияет на стабильность работы устройства. 
 Без нее приложение не сможет производить запись на память устройства, хотя такие функции, как 
 просмотр текстов будут по-прежнему доступны. Продолжить и внести изменения?</string>
 	<string name="ui_sdfix_done">Готово! Перезагрузите устройство, чтобы изменения вступили в силу.</string>
@@ -96,5 +100,5 @@ milesseventh@gmail.com</string>
     <string name="ui_stat_processed">Файл обработан</string>
     
     <string name="ui_sdaccesswarning_title">Доступ к памяти</string>
-    <string name="ui_sdaccesswarning">Пожалуйста, выберите файлы, к которым приложение может получить доступ в соответствующем пункте главного меню</string>
+    <string name="ui_sdaccesswarning">Извините, приложение не имеет прав на запись к вашим файлам из-за несовместимостью с вашей версией Android (5.0 и выше)</string>
 </resources>
