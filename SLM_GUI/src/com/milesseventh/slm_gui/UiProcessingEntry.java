@@ -16,6 +16,7 @@ public class UiProcessingEntry extends UiEntry {
 	private ImageView icon;
 	private static final LayoutParams icolp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 	private boolean frozen = false;
+	private String sourceLink;
 	
 	public UiProcessingEntry(Context _ctxt, File _victim, boolean _showtagtitle, OnClickListener _ocl) {
 		super(_ctxt, _victim, _showtagtitle);
@@ -66,11 +67,16 @@ public class UiProcessingEntry extends UiEntry {
 			snippet = _txt.substring(0, _txt.lastIndexOf(" ")) + "...";
 		} else
 			snippet = _txt;
+	}	
+	
+	public void setSourceLink(String _link){
+		sourceLink = _link;
 	}
 	
 	public String getStatus(){
 		return (heart.getPath() + "\n\n" + status + 
-				(snippet == null || snippet.isEmpty()?"":("\n\n" + this.getContext().getString(R.string.ui_snippet_prefix) + ":\n" + snippet)));
+				(snippet == null || snippet.isEmpty()?"":("\n\n" + this.getContext().getString(R.string.ui_snippet_prefix) + ":\n" + snippet)) +
+				"\n" + sourceLink);
 	}
 	
 	public String getTitle(){

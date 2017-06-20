@@ -64,6 +64,7 @@ public class ProcessorActivity extends Activity {
 				_statusMessage = getString(R.string.ui_loading);
 				break;
 			case SEARCH:
+				simplifyUI = true; //Needed for corrrect displaying of search results
 				_statusMessage = getString(R.string.ui_searching);
 				break;
 			case GETL:
@@ -103,7 +104,7 @@ public class ProcessorActivity extends Activity {
 		}
 
 		@Override
-		public void onFileProcessed(final int _position, Result _result) {
+		public void onFileProcessed(final int _position, Result _result, final String _sourceLink) {
 			final String _temp;
 			String _snippet = null;
 			final int _ico;
@@ -161,6 +162,7 @@ public class ProcessorActivity extends Activity {
 					if (!simplifyUI){
 						entries[_position].setStatus(me, getString(R.string.ui_stat_processed) + 
 								": " + _temp, _ico);
+						entries[_position].setSourceLink(_sourceLink);
 						if (_snip != null)
 							entries[_position].setSnippet(_snip);
 					}
@@ -226,7 +228,6 @@ public class ProcessorActivity extends Activity {
 					ui_status.setText(R.string.ui_done);
 				}
 			});
-			
 		}
 
 		@Override

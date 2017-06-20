@@ -10,7 +10,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
@@ -32,7 +31,6 @@ public class MainActivity extends Activity {
 	private static Activity _act;
 	
 	private FileChooser selector;
-	private int REQUEST_SDCARD = 42;
 	//Listener that creates context menu when an entry is long-tapped
 	private final OnLongClickListener cmlistener = new OnLongClickListener() {
 		@Override

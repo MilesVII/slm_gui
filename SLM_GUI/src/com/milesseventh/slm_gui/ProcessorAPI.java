@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -15,6 +14,11 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import com.omt.lyrics.SearchLyrics;
+import com.omt.lyrics.beans.Lyrics;
+import com.omt.lyrics.beans.SearchLyricsBean;
+import com.omt.lyrics.exception.SearchLyricsException;
+import com.omt.lyrics.util.Sites;
 
 public class ProcessorAPI implements Runnable {
 	/*
@@ -50,11 +54,12 @@ public class ProcessorAPI implements Runnable {
 	private int redir_amount = 0;
 	private int[] glresults = {0, 0, 0, 0, 0};
 	private ProcessorListener listener;
+	private String sourceLink;
 	
 	public interface ProcessorListener{
 		public void onStart (Command _mode);
 		public void onFileStarted(int _position);
-		public void onFileProcessed (int _position, Result _result);
+		public void onFileProcessed (int _position, Result _result, String _sourceLink);
 		public void onError (int _position, Exception _ex);
 		public void onShowLComplete (String _result, boolean _found);
 		public void onGetLComplete (int[] glResults);
@@ -128,7 +133,8 @@ public class ProcessorAPI implements Runnable {
 						//listener.onFileProcessed(_i, process(_unicorn));
 						Result ___ = process(_unicorn, _i);
 						if (active)
-							listener.onFileProcessed(_i, ___);
+							listener.onFileProcessed(_i, ___, sourceLink);
+						sourceLink = null;
 						_i++;
 					}else{
 						return;
@@ -212,40 +218,80 @@ public class ProcessorAPI implements Runnable {
 	}
 	
 	//May the Odds be Ever in your Favor!
-	//This code is really old
-	//Be quiet
 	
-	private String pullLyricsWrapper (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException{
+	private String pullLyricsWrapper (File _unicorn, boolean writeintotag) throws UnsupportedTagException, InvalidDataException, IOException, NotSupportedException, SearchLyricsException{
 		Mp3File _victim = new Mp3File(_unicorn);
 		ID3v2 _victimtag = _victim.getId3v2Tag();
 		if(!_victim.hasId3v2Tag()/* || _victimtag.getTitle() == null*/)//hasid3v2tag is modified
 			return("NT");
 		if (_victimtag.getLyrics() == null){
-			String santitle = null, rawtitle = _victimtag.getTitle().replace('[', '(').replace(']', ')');
-			if (rawtitle.contains("(") && rawtitle.indexOf("(") != 0){
-				santitle = rawtitle.substring(0, _victimtag.getTitle().indexOf("(") - 1);
+			String rawtitle = _victimtag.getTitle().replace('[', '(').replace(']', ')'), _artist = _victimtag.getArtist();
+			
+			String _lyr = "NF";
+			for (int _rage = 0; _rage < 3; _rage++){
+				_lyr = pullLyricsIterator(_rage, _artist, rawtitle, false);
+				if (_lyr != "NF")
+					break;
 			}
-			String _lyr = pullLyrics(_victimtag.getArtist(), rawtitle, 0, false);
-			if (_lyr == "NF" && santitle != null)
-				_lyr = pullLyrics(_victimtag.getArtist(), santitle, 0, false);
-			if (useCustomParser){
-				if (_lyr == "NF")
-					_lyr = pullLyricsUsingCustomPHPParser(customParserUrl, _victimtag.getArtist(), rawtitle, 0, false);
-				if (_lyr == "NF" && santitle != null)
-					_lyr = pullLyricsUsingCustomPHPParser(customParserUrl, _victimtag.getArtist(), santitle, 0, false);
-			}
+			
 			if (_lyr != "NF" && _lyr != null)
 				if (writeintotag){
 					_victimtag.setLyrics(_lyr);
 					_victim.save(_unicorn.getPath()+".x");
 					overkill(_unicorn, new File (_unicorn.getPath()+".x"));
 					return("OK");
-				}else
+				} else
 					return(_lyr);//Lyrics downloaded
 			else
 				return("NF");//Lyrics not found
 		}else
 			return("EXIMAGIK:" + _victimtag.getLyrics());//Lyrics already exist
+	}
+	
+	private String pullLyricsIterator(int _source, String _artist, String _title, boolean _fg) throws IOException, SearchLyricsException{
+		switch (_source){
+		case(0):
+			return pullLyrics(_artist, _title, 0, false);
+		
+		case(1):
+			if (_title.indexOf("(") > 0)
+				return pullLyrics(_artist, _title.substring(0, _title.indexOf("(") - 1), 0, _fg);
+			else
+				return "NF";
+		
+		case(2):
+			if (useCustomParser)
+				return pullLyricsUsingCustomPHPParser(customParserUrl, _artist, _title, 0);
+			else
+				return "NF";
+		
+		case(3):
+			//https://github.com/dhiralpandya/omtsearchlyrics
+			SearchLyrics omtSL = new SearchLyrics();
+		    SearchLyricsBean bean = new SearchLyricsBean();
+		    bean.setSongName(_title);
+		    bean.setSongArtist(_artist);
+		    bean.setSites(Sites.AZLYRICS);
+		    String _res = "NF";
+		    
+		    for (Lyrics lyric : omtSL.searchLyrics(bean)) 
+		    	_res = fixLineBreaks(lyric.getText());
+		    if (_res == "NF"){
+			    bean.setSites(Sites.METROLYRICS);
+	
+			    for (Lyrics lyric : omtSL.searchLyrics(bean)) 
+			    	_res = fixLineBreaks(lyric.getText());
+			    
+			    if (_res == "NF"){
+				    bean.setSites(Sites.SONGMEANINGS);
+		
+				    for (Lyrics lyric : omtSL.searchLyrics(bean)) 
+				    	_res = fixLineBreaks(lyric.getText());
+			    }
+		    }
+		    return _res;
+		}
+		return "NF";
 	}
 	
 	//http://inversekarma.in/technology/net/fetching-lyrics-from-lyricwiki-in-c/
@@ -287,18 +333,17 @@ public class ProcessorAPI implements Runnable {
 		} else if (_lyrics.contains("!-- PUT LYRICS HERE (and delete this entire line) -->"))//Lyrics not found
 			return ("NF");
 		
+		if(_lyrics.indexOf("&lt;lyrics>") == -1)
+			return ("NF");
+		
 		//Get surrounding tags.
 		iStart = _lyrics.indexOf("&lt;lyrics>") + 11;
 		iEnd = _lyrics.indexOf("&lt;/lyrics>") - 1;
-
-		if(iStart == 10 || iEnd == -2){
-			return ("NF");
-		}
-		
+		sourceLink = _cleanurl;
 		return (_lyrics.substring(iStart, iEnd).trim().replace("&amp;", "&"));
 	}
 	
-	private String pullLyricsUsingCustomPHPParser(String _scripturl, String _artist, String _title, int depth, boolean _fg) throws IOException{
+	private String pullLyricsUsingCustomPHPParser(String _scripturl, String _artist, String _title, int depth) throws IOException{
 		String _lyrics;
 		_artist = sanitize(_artist);
 		_title = sanitize(_title);
@@ -315,6 +360,7 @@ public class ProcessorAPI implements Runnable {
 		if (_lyrics.equalsIgnoreCase("")){
 			return ("NF");
 		}
+		sourceLink = _url;
 		return (_lyrics);
 	}
 
@@ -366,5 +412,9 @@ public class ProcessorAPI implements Runnable {
 		zero.getId3v2Tag().setLyrics(_soul);
 		zero.save(_victim.getPath() + REWRITE_FILE_SUFFIX);
 		overkill(_victim, new File(_victim.getPath() + REWRITE_FILE_SUFFIX));
+	}
+	
+	private String fixLineBreaks(String _in){
+		return (_in.replaceAll("\n \n", "\n"));
 	}
 }

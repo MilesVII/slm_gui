@@ -8,7 +8,6 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.provider.DocumentFile;
 
 public class ReceptionActivity extends Activity {
 	/*
