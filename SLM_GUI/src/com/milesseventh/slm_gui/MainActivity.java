@@ -104,6 +104,8 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
+		if (!Utils.isFileIOFuckedUp())
+			menu.removeItem(R.id.action_sdaccess);
 		return true;
 	}
 

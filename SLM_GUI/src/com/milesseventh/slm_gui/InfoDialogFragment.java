@@ -39,6 +39,7 @@ public class InfoDialogFragment extends DialogFragment {
 		
 		if (linkify){
 			TextView _tv = new TextView(ctxt);
+			_tv.setPadding(5, 5, 5, 5);
 			_tv.setText(text);
 			Linkify.addLinks(_tv, Linkify.ALL);
 			_builder.setView(_tv);
