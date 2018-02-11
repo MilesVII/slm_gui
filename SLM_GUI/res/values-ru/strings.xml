@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-
     <string name="app_name">Seventh Lyrics Manager</string>
     <string name="action_settings">Settings</string>
     <string name="menu_gl">Скачать тексты в mp3-файлы</string>
@@ -25,8 +24,8 @@
     <string name="ui_textcopied">Текст скопирован в буфер обмена</string>
     <string name="ui_saved">Сохранено</string>
     <string name="ui_aborted">Отменено</string>
-    <string name="ui_erasing">Производится удаление&#8230;</string>
-    <string name="ui_processing">Обрабатывается&#8230;</string>
+    <string name="ui_erasing">Производится удаление…</string>
+    <string name="ui_processing">Обрабатывается…</string>
     <string name="ui_processed">Обработано</string>
     <string name="ui_er_done">Все тексты песен успешно стерты</string>
     <string name="ui_ok">ОК</string>
@@ -37,9 +36,9 @@
     <string name="ui_ignored">Пропущено</string>
     <string name="ui_notfound">Не найдено</string>
     <string name="ui_sumtotal">Всего</string>
-    <string name="ui_loading">Загрузка&#8230;</string>
+    <string name="ui_loading">Загрузка…</string>
     <string name="ui_lyrhere">Песни, текст которых содержит поисковый запрос, будут отображены здесь</string>
-    <string name="ui_searching">Поиск&#8230;</string>
+    <string name="ui_searching">Поиск…</string>
     <string name="ui_foundlyrshere">Файлы, содержащие поисковый запрос</string>
     <string name="ui_nothingwasfound">Ничего не найдено</string>
     <string name="ui_e_crit">Критическая ошибка</string>
@@ -57,7 +56,7 @@
     <string name="ui_stop">Стоп</string>
     <string name="ui_ph_squery">Поисковый запрос</string>
     <string name="ui_snippet_prefix">Текст песни</string>
-	<string name="about_content">Seventh Lyrics Manager - бесплатное приложение с открытым исходным кодом, позволяющее автоматически скачивать и записывать тексты песен в их ID3v2-тег, имеющийся в большинстве mp3-файлов. Далее загруженные тексты могут быть просмотрены во многих плеерах при воспроизведении песни. \n
+    <string name="about_content">Seventh Lyrics Manager - бесплатное приложение с открытым исходным кодом, позволяющее автоматически скачивать и записывать тексты песен в их ID3v2-тег, имеющийся в большинстве mp3-файлов. Далее загруженные тексты могут быть просмотрены во многих плеерах при воспроизведении песни. \n
 Developed by Miles Seventh, 2016\n
 \n
 ОТКАЗ ОТ ОТВЕТСТВЕННОСТИ\n
@@ -70,10 +69,7 @@ Seventh Lyrics Manager распространяется Разработчико
 http://github.com/MilesVII/slm_gui\n
 milesseventh@gmail.com</string>
     <string name="ui_settings">Настройки</string>
-    <string name="ui_showing_big_selection_warning">Выбрано слишком много файлов. Составление и отображение списка может занять некоторое время. Продолжить?</string>
     <string name="ui_exit">Закрыть приложение</string>
-    
-    
     <string name="ui_set_shownots">Отображать уведомления</string>
     <string name="ui_set_foc">Автоматически закрывать окно обработки</string>
     <string name="ui_set_showtag">Отображать название песни вместо имени файла в процессе обработки (Снижает скорость работы!)</string>
@@ -83,22 +79,17 @@ milesseventh@gmail.com</string>
     <string name="ui_set_queue_limit">Число файлов, при обработке которых используется обычный вневшний вид. При превышении будет использован упрощенный вид.</string>
     <string name="ui_set_use_php_parser">Использовать сторонний PHP-парсер, если текст песни не найден (Для опытных пользователей)</string>
     <string name="ui_set_use_php_parser_short">Использовать сторонний PHP-парсер</string>
-    <string name="ui_set_php_url">URL вашего PHP-скрипта</string>    
-    <string name="ui_set_php_url_cmnt">Используйте \"&lt;A&gt;\" и \"&lt;T&gt;\" там, где должны быть имя исполнителя и название трека</string>
-    
-    
-    <string name="ui_sdfix_caution">Похоже, версия вашей ОС - Android 4.4. Проблема в том, 
-что приложение не может производить запись данных в файлы без внесения некоторых изменений в 
-системных настройках. Данная операция безвредна и не влияет на стабильность работы устройства. 
+    <string name="ui_set_php_url">URL вашего PHP-скрипта</string>
+    <string name="ui_set_php_url_cmnt">Используйте \"&amp;lt;A&amp;gt;\" и \"&amp;lt;T&amp;gt;\" там, где должны быть имя исполнителя и название трека</string>
+    <!-- DEPRECATED --><string name="ui_sdfix_caution">Полная функциональность не может быть гарантирована на ОС версии 4.4+. Если вы обладаете правами root-пользователя, рекомендуется установить системный патч. 
+Данная операция безвредна и не влияет на стабильность работы устройства. 
 Без нее приложение не сможет производить запись на память устройства, хотя такие функции, как 
 просмотр текстов будут по-прежнему доступны. Продолжить и внести изменения?</string>
-	<string name="ui_sdfix_done">Готово! Перезагрузите устройство, чтобы изменения вступили в силу.</string>
-    <string name="ui_sdfix_e">Не удалось внести изменения. Мы пытались.</string>
-    
+    <!-- DEPRECATED --><string name="ui_sdfix_done">Готово! Перезагрузите устройство, чтобы изменения вступили в силу.</string>
+    <!-- DEPRECATED --><string name="ui_sdfix_e">Не удалось внести изменения. Мы пытались.</string>
     <string name="ui_stat_wait">Файл стоит в очереди на обработку</string>
     <string name="ui_stat_processing">Файл обрабатывается</string>
     <string name="ui_stat_processed">Файл обработан</string>
-    
     <string name="ui_sdaccesswarning_title">Доступ к памяти</string>
-    <string name="ui_sdaccesswarning">Извините, приложение не имеет прав на запись к вашим файлам из-за несовместимостью с вашей версией Android (5.0 и выше)</string>
+    <!-- DEPRECATED --><string name="ui_sdaccesswarning">Извините, приложение не имеет прав на запись к вашим файлам из-за несовместимостью с вашей версией Android (5.0 и выше)</string>
 </resources>

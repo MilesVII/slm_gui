@@ -2,9 +2,16 @@ package com.mpatric.mp3agic;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.channels.Channels;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.milesseventh.slm_gui.MainActivity;
+import com.milesseventh.slm_gui.Utils;
+
+import android.support.v4.provider.DocumentFile;
 
 public class Mp3File extends FileWrapper {
 
@@ -420,24 +427,40 @@ public class Mp3File extends FileWrapper {
 		if (file.compareTo(new File(newFilename)) == 0) {
 			//throw new IllegalArgumentException("Save filename same as source filename");
 		}
-		RandomAccessFile saveFile = new RandomAccessFile(newFilename, "rw");
-		try {
-			if (hasId3v2Tag()) {
-				saveFile.write(id3v2Tag.toBytes());
+		
+		if (Utils.isFileIOFuckedUp()){//INJECTED//////////////////////////////////////////////////////
+			File f = new File(newFilename);
+			DocumentFile df = DocumentFile.fromFile(f.getParentFile())
+			                              .createFile("audio/mp3", f.getName());//.substring(0, f.getName().length() - 4));
+			OutputStream os = MainActivity.getInstance().getContentResolver().openOutputStream(df.getUri());
+			if (hasId3v2Tag())
+				os.write(id3v2Tag.toBytes());
+			saveMpegFrames(os);
+			if (hasCustomTag())
+				os.write(customTag);
+			if (hasId3v1Tag())
+				os.write(id3v1Tag.toBytes());
+			
+		} else {//////////////////////////////////////////////////////////////////////////////////////
+			RandomAccessFile saveFile = new RandomAccessFile(newFilename, "rw");
+			try {
+				if (hasId3v2Tag()) {
+					saveFile.write(id3v2Tag.toBytes());
+				}
+				saveMpegFrames(Channels.newOutputStream(saveFile.getChannel()));
+				if (hasCustomTag()) {
+					saveFile.write(customTag);
+				}
+				if (hasId3v1Tag()) {
+					saveFile.write(id3v1Tag.toBytes());
+				}
+			} finally {
+				saveFile.close();
 			}
-			saveMpegFrames(saveFile);
-			if (hasCustomTag()) {
-				saveFile.write(customTag);
-			}
-			if (hasId3v1Tag()) {
-				saveFile.write(id3v1Tag.toBytes());
-			}
-		} finally {
-			saveFile.close();
 		}
 	}
-
-	private void saveMpegFrames(RandomAccessFile saveFile) throws IOException {
+	
+	private void saveMpegFrames(OutputStream os) throws IOException {
 		int filePos = xingOffset;
 		if (filePos < 0) filePos = startOffset;
 		if (filePos < 0) return;
@@ -449,10 +472,10 @@ public class Mp3File extends FileWrapper {
 			while (true) {
 				int bytesRead = randomAccessFile.read(bytes, 0, bufferLength);
 				if (filePos + bytesRead <= endOffset) {
-					saveFile.write(bytes, 0, bytesRead);
+					os.write(bytes, 0, bytesRead);
 					filePos += bytesRead;
 				} else {
-					saveFile.write(bytes, 0, endOffset - filePos + 1);
+					os.write(bytes, 0, endOffset - filePos + 1);
 					break;
 				}
 			}

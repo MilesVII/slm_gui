@@ -75,8 +75,8 @@ public class UiProcessingEntry extends UiEntry {
 	
 	public String getStatus(){
 		return (heart.getPath() + "\n\n" + status + 
-				(snippet == null || snippet.isEmpty()?"":("\n\n" + this.getContext().getString(R.string.ui_snippet_prefix) + ":\n" + snippet)) +
-				"\n" + sourceLink);
+		       (snippet == null || snippet.isEmpty() ? "":("\n\n" + this.getContext().getString(R.string.ui_snippet_prefix) + ":\n" + snippet)) +
+		       (sourceLink != null ? "\n\n" + sourceLink : ""));
 	}
 	
 	public String getTitle(){

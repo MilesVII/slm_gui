@@ -50,7 +50,7 @@ public class ProcessorActivity extends Activity {
 		@Override
 		public void onClick(View callofktulu) {
 			UiProcessingEntry _t = (UiProcessingEntry) callofktulu;
-			Utils.showInfoDialog(me, _t.getTitle(), _t.getStatus());
+			Utils.showInfoDialogLinkified(me, _t.getTitle(), _t.getStatus());
 		}
 	};
 	/////Start of behavior defining (About 200 lines)/////
@@ -64,7 +64,7 @@ public class ProcessorActivity extends Activity {
 				_statusMessage = getString(R.string.ui_loading);
 				break;
 			case SEARCH:
-				simplifyUI = true; //Needed for corrrect displaying of search results
+				//simplifyUI = true; //Needed for corrrect displaying of search results
 				_statusMessage = getString(R.string.ui_searching);
 				break;
 			case GETL:
@@ -302,7 +302,7 @@ public class ProcessorActivity extends Activity {
 		
 		//Initialize list of processing entries
 		if (processingList != null){
-			simplifyUI = Utils.loadQueueLimitFromPreferences(this) < processingList.size();
+			simplifyUI = (Utils.loadQueueLimitFromPreferences(this) < processingList.size()) || _instructions.get(EXTRA_COMMAND) == ProcessorAPI.Command.SEARCH;
 			if (!simplifyUI){
 				ui_list.removeView(ui_console);
 				entries = new UiProcessingEntry[processingList.size()];

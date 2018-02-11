@@ -20,6 +20,8 @@ import com.omt.lyrics.beans.SearchLyricsBean;
 import com.omt.lyrics.exception.SearchLyricsException;
 import com.omt.lyrics.util.Sites;
 
+import android.support.v4.provider.DocumentFile;
+
 public class ProcessorAPI implements Runnable {
 	/*
 	 * This class isn't connected to Android API. You can use it in your own application with customized mp3agic lib,
@@ -131,10 +133,10 @@ public class ProcessorAPI implements Runnable {
 					if (active){
 						listener.onFileStarted(_i);
 						//listener.onFileProcessed(_i, process(_unicorn));
+						sourceLink = null;
 						Result ___ = process(_unicorn, _i);
 						if (active)
 							listener.onFileProcessed(_i, ___, sourceLink);
-						sourceLink = null;
 						_i++;
 					}else{
 						return;
@@ -399,8 +401,13 @@ public class ProcessorAPI implements Runnable {
 	}
 	
 	public static void overkill(File _victim, File _master){
-		_victim.delete();
-		_master.renameTo(_victim);
+		if (Utils.isFileIOFuckedUp()){
+			DocumentFile.fromFile(_victim).delete();
+			DocumentFile.fromFile(_master).renameTo(_victim.getName());
+		} else {
+			_victim.delete();
+			_master.renameTo(_victim);
+		}
 	}
 
 	public static String getLyricsFromTag (File _in) throws Exception{
